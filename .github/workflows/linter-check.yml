@@ -1,0 +1,18 @@
+name: linter-check
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: run install
+        run: make install
+
+      - name: linter project check
+        run: make lint

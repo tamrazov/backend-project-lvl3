@@ -15,6 +15,20 @@
   "devDependencies": {
     "eslint": "8.4.1",
     "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "2.25.3"
-  }
+    "eslint-plugin-import": "2.25.3",
+    "jest": "27.4.5"
+  },
+  "dependencies": {
+    "acorn": "8.6.0",
+    "acorn-jsx": "5.3.2",
+    "commander": "8.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleksandrtamrazov/backend-project-lvl3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aleksandrtamrazov/backend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/aleksandrtamrazov/backend-project-lvl3#readme"
 }

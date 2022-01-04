@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: run install
-        run: npm ci
+        run: npm install
 
       - name: linter project check
         run: npx eslint .

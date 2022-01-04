@@ -4,7 +4,7 @@
   "description": "page-loader",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "npx jest --bail"
   },
   "bin": {
     "page-loader": "bin/page-loader.js"
@@ -16,6 +16,7 @@
     "eslint": "8.5.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-jest": "25.3.4",
     "jest": "27.4.5",
     "nock": "13.2.1"
   },

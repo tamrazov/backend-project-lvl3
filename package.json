@@ -4,7 +4,7 @@
   "description": "page-loader",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest --bail"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "bin": {
     "page-loader": "bin/page-loader.js"

@@ -1,14 +1,9 @@
 import Axios from 'axios';
 
-export const fetch = async (path) => {
-  const response = await Axios.get(path, {
-  });
-
-  return response;
+const pageLoading = (path) => {
+  Axios.get(path)
+    .then((response) => response.data)
+    .catch((err) => console.log(err));
 };
 
-export const pageLoading = async (path) => {
-  const res = await fetch(path);
-
-  return res.data;
-};
+export default pageLoading;

@@ -1,0 +1,263 @@
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>cheerio</title><meta name="description" content="Documentation for cheerio"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">cheerio</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>cheerio</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography"><h1 align="center">cheerio</h1>
+
+<h5 align="center">Fast, flexible & lean implementation of core jQuery designed specifically for the server.</h5>
+
+<div align="center">
+  <a href="https://github.com/cheeriojs/cheerio/actions?query=workflow%3ACI+branch%3Amain">
+    <img src="https://img.shields.io/github/workflow/status/cheeriojs/cheerio/CI/main" alt="Build Status">
+  </a>
+  <a href="https://coveralls.io/github/cheeriojs/cheerio">
+    <img src="https://img.shields.io/coveralls/github/cheeriojs/cheerio/main" alt="Coverage">
+  </a>
+  <a href="#backers">
+    <img src="https://img.shields.io/opencollective/backers/cheerio" alt="OpenCollective backers">
+  </a>
+  <a href="#sponsors">
+    <img src="https://img.shields.io/opencollective/sponsors/cheerio" alt="OpenCollective sponsors">
+  </a>
+</div>
+
+<br>
+
+<p><a href="https://github.com/cheeriojs/cheerio/wiki/Chinese-README">中文文档 (Chinese Readme)</a></p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">cheerio</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&#39;cheerio&#39;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">$</span><span class="hl-1"> = </span><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">load</span><span class="hl-1">(</span><span class="hl-3">&#39;&lt;h2 class=&quot;title&quot;&gt;Hello world&lt;/h2&gt;&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;h2.title&#39;</span><span class="hl-1">).</span><span class="hl-7">text</span><span class="hl-1">(</span><span class="hl-3">&#39;Hello there!&#39;</span><span class="hl-1">);</span><br/><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;h2&#39;</span><span class="hl-1">).</span><span class="hl-7">addClass</span><span class="hl-1">(</span><span class="hl-3">&#39;welcome&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-2">$</span><span class="hl-1">.</span><span class="hl-7">html</span><span class="hl-1">();</span><br/><span class="hl-4">//=&gt; &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;h2 class=&quot;title welcome&quot;&gt;Hello there!&lt;/h2&gt;&lt;/body&gt;&lt;/html&gt;</span>
+</code></pre>
+
+<a href="#note" id="note" style="color: inherit; text-decoration: none;">
+  <h2>Note</h2>
+</a>
+<p>We are currently working on the 1.0.0 release of cheerio on the <code>main</code> branch. The source code for the last published version, <code>0.22.0</code>, can be found <a href="https://github.com/cheeriojs/cheerio/tree/aa90399c9c02f12432bfff97b8f1c7d8ece7c307">here</a>.</p>
+
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h2>Installation</h2>
+</a>
+<p><code>npm install cheerio</code></p>
+
+<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+  <h2>Features</h2>
+</a>
+<p><strong>&#10084; Familiar syntax:</strong>
+Cheerio implements a subset of core jQuery. Cheerio removes all the DOM inconsistencies and browser cruft from the jQuery library, revealing its truly gorgeous API.</p>
+<p><strong>&#991; Blazingly fast:</strong>
+Cheerio works with a very simple, consistent DOM model. As a result parsing, manipulating, and rendering are incredibly efficient.</p>
+<p><strong>&#10049; Incredibly flexible:</strong>
+Cheerio wraps around <a href="https://github.com/inikulin/parse5">parse5</a> parser and can optionally use @FB55&#39;s forgiving <a href="https://github.com/fb55/htmlparser2/">htmlparser2</a>. Cheerio can parse nearly any HTML or XML document.</p>
+
+<a href="#cheerio-is-not-a-web-browser" id="cheerio-is-not-a-web-browser" style="color: inherit; text-decoration: none;">
+  <h2>Cheerio is not a web browser</h2>
+</a>
+<p>Cheerio parses markup and provides an API for traversing/manipulating the resulting data structure. It does not interpret the result as a web browser does. Specifically, it does <em>not</em> produce a visual rendering, apply CSS, load external resources, or execute JavaScript which is common for a SPA (single page application). This makes Cheerio <strong>much, much faster than other solutions</strong>. If your use case requires any of this functionality, you should consider browser automation software like <a href="https://github.com/puppeteer/puppeteer">Puppeteer</a> and <a href="https://github.com/microsoft/playwright">Playwright</a> or DOM emulation projects like <a href="https://github.com/jsdom/jsdom">JSDom</a>.</p>
+
+<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+  <h2>API</h2>
+</a>
+
+<a href="#markup-example-we39ll-be-using" id="markup-example-we39ll-be-using" style="color: inherit; text-decoration: none;">
+  <h3>Markup example we&#39;ll be using:</h3>
+</a>
+<pre><code class="language-html"><span class="hl-8">&lt;</span><span class="hl-9">ul</span><span class="hl-1"> </span><span class="hl-10">id</span><span class="hl-1">=</span><span class="hl-11">&quot;fruits&quot;</span><span class="hl-8">&gt;</span><br/><span class="hl-1">  </span><span class="hl-8">&lt;</span><span class="hl-9">li</span><span class="hl-1"> </span><span class="hl-10">class</span><span class="hl-1">=</span><span class="hl-11">&quot;apple&quot;</span><span class="hl-8">&gt;</span><span class="hl-1">Apple</span><span class="hl-8">&lt;/</span><span class="hl-9">li</span><span class="hl-8">&gt;</span><br/><span class="hl-1">  </span><span class="hl-8">&lt;</span><span class="hl-9">li</span><span class="hl-1"> </span><span class="hl-10">class</span><span class="hl-1">=</span><span class="hl-11">&quot;orange&quot;</span><span class="hl-8">&gt;</span><span class="hl-1">Orange</span><span class="hl-8">&lt;/</span><span class="hl-9">li</span><span class="hl-8">&gt;</span><br/><span class="hl-1">  </span><span class="hl-8">&lt;</span><span class="hl-9">li</span><span class="hl-1"> </span><span class="hl-10">class</span><span class="hl-1">=</span><span class="hl-11">&quot;pear&quot;</span><span class="hl-8">&gt;</span><span class="hl-1">Pear</span><span class="hl-8">&lt;/</span><span class="hl-9">li</span><span class="hl-8">&gt;</span><br/><span class="hl-8">&lt;/</span><span class="hl-9">ul</span><span class="hl-8">&gt;</span>
+</code></pre>
+<p>This is the HTML markup we will be using in all of the API examples.</p>
+
+<a href="#loading" id="loading" style="color: inherit; text-decoration: none;">
+  <h3>Loading</h3>
+</a>
+<p>First you need to load in the HTML. This step in jQuery is implicit, since jQuery operates on the one, baked-in DOM. With Cheerio, we need to pass in the HTML document.</p>
+<p>This is the <em>preferred</em> method:</p>
+<pre><code class="language-js"><span class="hl-4">// ES6 or TypeScript:</span><br/><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-5">*</span><span class="hl-1"> </span><span class="hl-0">as</span><span class="hl-1"> </span><span class="hl-2">cheerio</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&#39;cheerio&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">// In other environments:</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">cheerio</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&#39;cheerio&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">$</span><span class="hl-1"> = </span><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">load</span><span class="hl-1">(</span><span class="hl-3">&#39;&lt;ul id=&quot;fruits&quot;&gt;...&lt;/ul&gt;&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-2">$</span><span class="hl-1">.</span><span class="hl-7">html</span><span class="hl-1">();</span><br/><span class="hl-4">//=&gt; &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;ul id=&quot;fruits&quot;&gt;...&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</span>
+</code></pre>
+<p>Similar to web browser contexts, <code>load</code> will introduce <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, and <code>&lt;body&gt;</code> elements if they are not already present. You can set <code>load</code>&#39;s third argument to <code>false</code> to disable this.</p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">$</span><span class="hl-1"> = </span><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">load</span><span class="hl-1">(</span><span class="hl-3">&#39;&lt;ul id=&quot;fruits&quot;&gt;...&lt;/ul&gt;&#39;</span><span class="hl-1">, </span><span class="hl-5">null</span><span class="hl-1">, </span><span class="hl-5">false</span><span class="hl-1">);</span><br/><br/><span class="hl-2">$</span><span class="hl-1">.</span><span class="hl-7">html</span><span class="hl-1">();</span><br/><span class="hl-4">//=&gt; &#39;&lt;ul id=&quot;fruits&quot;&gt;...&lt;/ul&gt;&#39;</span>
+</code></pre>
+<p>Optionally, you can also load in the HTML by passing the string as the context:</p>
+<pre><code class="language-js"><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;ul&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;&lt;ul id=&quot;fruits&quot;&gt;...&lt;/ul&gt;&#39;</span><span class="hl-1">);</span>
+</code></pre>
+<p>Or as the root:</p>
+<pre><code class="language-js"><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;li&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;ul&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;&lt;ul id=&quot;fruits&quot;&gt;...&lt;/ul&gt;&#39;</span><span class="hl-1">);</span>
+</code></pre>
+<p>If you need to modify parsing options for XML input, you may pass an extra
+object to <code>.load()</code>:</p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">$</span><span class="hl-1"> = </span><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">load</span><span class="hl-1">(</span><span class="hl-3">&#39;&lt;ul id=&quot;fruits&quot;&gt;...&lt;/ul&gt;&#39;</span><span class="hl-1">, {</span><br/><span class="hl-1">  </span><span class="hl-2">xml:</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-2">normalizeWhitespace:</span><span class="hl-1"> </span><span class="hl-5">true</span><span class="hl-1">,</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">});</span>
+</code></pre>
+<p>The options in the <code>xml</code> object are taken directly from <a href="https://github.com/fb55/htmlparser2/wiki/Parser-options">htmlparser2</a>, therefore any options that can be used in <code>htmlparser2</code> are valid in cheerio as well. When <code>xml</code> is set, the default options are:</p>
+<pre><code class="language-js"><span class="hl-1">{</span><br/><span class="hl-1">    </span><span class="hl-12">xmlMode</span><span class="hl-1">: </span><span class="hl-5">true</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-12">decodeEntities</span><span class="hl-1">: </span><span class="hl-5">true</span><span class="hl-1">, </span><span class="hl-4">// Decode HTML entities.</span><br/><span class="hl-1">    </span><span class="hl-12">withStartIndices</span><span class="hl-1">: </span><span class="hl-5">false</span><span class="hl-1">, </span><span class="hl-4">// Add a `startIndex` property to nodes.</span><br/><span class="hl-1">    </span><span class="hl-12">withEndIndices</span><span class="hl-1">: </span><span class="hl-5">false</span><span class="hl-1">, </span><span class="hl-4">// Add an `endIndex` property to nodes.</span><br/><span class="hl-1">}</span>
+</code></pre>
+<p>For a full list of options and their effects, see <a href="https://github.com/fb55/DomHandler">domhandler</a> and
+<a href="https://github.com/fb55/htmlparser2/wiki/Parser-options">htmlparser2&#39;s options</a>.</p>
+
+<a href="#using-htmlparser2" id="using-htmlparser2" style="color: inherit; text-decoration: none;">
+  <h4>Using <code>htmlparser2</code></h4>
+</a>
+<p>Cheerio ships with two parsers, <code>parse5</code> and <code>htmlparser2</code>. The
+former is the default for HTML, the latter the default for XML.</p>
+<p>Some users may wish to parse markup with the <code>htmlparser2</code> library, and
+traverse/manipulate the resulting structure with Cheerio. This may be the case
+for those upgrading from pre-1.0 releases of Cheerio (which relied on
+<code>htmlparser2</code>), for those dealing with invalid markup (because <code>htmlparser2</code> is
+more forgiving), or for those operating in performance-critical situations
+(because <code>htmlparser2</code> may be faster in some cases). Note that &quot;more forgiving&quot;
+means <code>htmlparser2</code> has error-correcting mechanisms that aren&#39;t always a match
+for the standards observed by web browsers. This behavior may be useful when
+parsing non-HTML content.</p>
+<p>To support these cases, <code>load</code> also accepts a <code>htmlparser2</code>-compatible data
+structure as its first argument. Users may install <code>htmlparser2</code>, use it to
+parse input, and pass the result to <code>load</code>:</p>
+<pre><code class="language-js"><span class="hl-4">// Usage as of htmlparser2 version 6:</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">htmlparser2</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&#39;htmlparser2&#39;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">dom</span><span class="hl-1"> = </span><span class="hl-2">htmlparser2</span><span class="hl-1">.</span><span class="hl-7">parseDocument</span><span class="hl-1">(</span><span class="hl-2">document</span><span class="hl-1">, </span><span class="hl-2">options</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">$</span><span class="hl-1"> = </span><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">load</span><span class="hl-1">(</span><span class="hl-2">dom</span><span class="hl-1">);</span>
+</code></pre>
+<p>If you want to save some bytes, you can use Cheerio&#39;s <em>slim</em> export, which
+always uses <code>htmlparser2</code>:</p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">cheerio</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&#39;cheerio/lib/slim&#39;</span><span class="hl-1">);</span>
+</code></pre>
+
+<a href="#selectors" id="selectors" style="color: inherit; text-decoration: none;">
+  <h3>Selectors</h3>
+</a>
+<p>Cheerio&#39;s selector implementation is nearly identical to jQuery&#39;s, so the API is very similar.</p>
+
+<a href="#-selector-context-root-" id="-selector-context-root-" style="color: inherit; text-decoration: none;">
+  <h4>$( selector, [context], [root] )</h4>
+</a>
+<p><code>selector</code> searches within the <code>context</code> scope which searches within the <code>root</code> scope. <code>selector</code> and <code>context</code> can be a string expression, DOM Element, array of DOM elements, or cheerio object. <code>root</code> is typically the HTML document string.</p>
+<p>This selector method is the starting point for traversing and manipulating the document. Like jQuery, it&#39;s the primary method for selecting elements in the document.</p>
+<pre><code class="language-js"><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;.apple&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;#fruits&#39;</span><span class="hl-1">).</span><span class="hl-7">text</span><span class="hl-1">();</span><br/><span class="hl-4">//=&gt; Apple</span><br/><br/><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;ul .pear&#39;</span><span class="hl-1">).</span><span class="hl-7">attr</span><span class="hl-1">(</span><span class="hl-3">&#39;class&#39;</span><span class="hl-1">);</span><br/><span class="hl-4">//=&gt; pear</span><br/><br/><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;li[class=orange]&#39;</span><span class="hl-1">).</span><span class="hl-7">html</span><span class="hl-1">();</span><br/><span class="hl-4">//=&gt; Orange</span>
+</code></pre>
+
+<a href="#xml-namespaces" id="xml-namespaces" style="color: inherit; text-decoration: none;">
+  <h5>XML Namespaces</h5>
+</a>
+<p>You can select with XML Namespaces but <a href="https://www.w3.org/TR/2011/REC-css3-selectors-20110929/#attribute-selectors">due to the CSS specification</a>, the colon (<code>:</code>) needs to be escaped for the selector to be valid.</p>
+<pre><code class="language-js"><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;[xml</span><span class="hl-13">\\</span><span class="hl-3">:id=&quot;main&quot;&#39;</span><span class="hl-1">);</span>
+</code></pre>
+
+<a href="#rendering" id="rendering" style="color: inherit; text-decoration: none;">
+  <h3>Rendering</h3>
+</a>
+<p>When you&#39;re ready to render the document, you can call the <code>html</code> method on the &quot;root&quot; selection:</p>
+<pre><code class="language-js"><span class="hl-2">$</span><span class="hl-1">.</span><span class="hl-7">root</span><span class="hl-1">().</span><span class="hl-7">html</span><span class="hl-1">();</span><br/><span class="hl-4">//=&gt;  &lt;html&gt;</span><br/><span class="hl-4">//      &lt;head&gt;&lt;/head&gt;</span><br/><span class="hl-4">//      &lt;body&gt;</span><br/><span class="hl-4">//        &lt;ul id=&quot;fruits&quot;&gt;</span><br/><span class="hl-4">//          &lt;li class=&quot;apple&quot;&gt;Apple&lt;/li&gt;</span><br/><span class="hl-4">//          &lt;li class=&quot;orange&quot;&gt;Orange&lt;/li&gt;</span><br/><span class="hl-4">//          &lt;li class=&quot;pear&quot;&gt;Pear&lt;/li&gt;</span><br/><span class="hl-4">//        &lt;/ul&gt;</span><br/><span class="hl-4">//      &lt;/body&gt;</span><br/><span class="hl-4">//    &lt;/html&gt;</span>
+</code></pre>
+<p>If you want to render the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML"><code>outerHTML</code></a> of a selection, you can use the <code>html</code> utility functon:</p>
+<pre><code class="language-js"><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">html</span><span class="hl-1">(</span><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;.pear&#39;</span><span class="hl-1">));</span><br/><span class="hl-4">//=&gt; &lt;li class=&quot;pear&quot;&gt;Pear&lt;/li&gt;</span>
+</code></pre>
+<p>You may also render the text content of a Cheerio object using the <code>text</code> static method:</p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">$</span><span class="hl-1"> = </span><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">load</span><span class="hl-1">(</span><span class="hl-3">&#39;This is &lt;em&gt;content&lt;/em&gt;.&#39;</span><span class="hl-1">);</span><br/><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">text</span><span class="hl-1">(</span><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;body&#39;</span><span class="hl-1">));</span><br/><span class="hl-4">//=&gt; This is content.</span>
+</code></pre>
+
+<a href="#plugins" id="plugins" style="color: inherit; text-decoration: none;">
+  <h3>Plugins</h3>
+</a>
+<p>Once you have loaded a document, you may extend the prototype or the equivalent <code>fn</code> property with custom plugin methods:</p>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">$</span><span class="hl-1"> = </span><span class="hl-2">cheerio</span><span class="hl-1">.</span><span class="hl-7">load</span><span class="hl-1">(</span><span class="hl-3">&#39;&lt;html&gt;&lt;body&gt;Hello, &lt;b&gt;world&lt;/b&gt;!&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="hl-1">);</span><br/><span class="hl-14">$</span><span class="hl-1">.</span><span class="hl-2">prototype</span><span class="hl-1">.</span><span class="hl-7">logHtml</span><span class="hl-1"> = </span><span class="hl-5">function</span><span class="hl-1"> () {</span><br/><span class="hl-1">  </span><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">(</span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-7">html</span><span class="hl-1">());</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-7">$</span><span class="hl-1">(</span><span class="hl-3">&#39;body&#39;</span><span class="hl-1">).</span><span class="hl-7">logHtml</span><span class="hl-1">(); </span><span class="hl-4">// logs &quot;Hello, &lt;b&gt;world&lt;/b&gt;!&quot; to the console</span>
+</code></pre>
+<p>If you&#39;re using TypeScript, you should add a type definition for your new method:</p>
+<pre><code class="language-ts"><span class="hl-5">declare</span><span class="hl-1"> </span><span class="hl-5">module</span><span class="hl-1"> </span><span class="hl-3">&#39;cheerio&#39;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-14">Cheerio</span><span class="hl-1">&lt;</span><span class="hl-14">T</span><span class="hl-1">&gt; {</span><br/><span class="hl-1">    </span><span class="hl-7">logHtml</span><span class="hl-1">(</span><span class="hl-5">this</span><span class="hl-1">: </span><span class="hl-14">Cheerio</span><span class="hl-1">&lt;</span><span class="hl-14">T</span><span class="hl-1">&gt;): </span><span class="hl-14">void</span><span class="hl-1">;</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span>
+</code></pre>
+
+<a href="#the-quotdom-nodequot-object" id="the-quotdom-nodequot-object" style="color: inherit; text-decoration: none;">
+  <h3>The &quot;DOM Node&quot; object</h3>
+</a>
+<p>Cheerio collections are made up of objects that bear some resemblance to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Node">browser-based DOM nodes</a>. You can expect them to define the following properties:</p>
+<ul>
+<li><code>tagName</code></li>
+<li><code>parentNode</code></li>
+<li><code>previousSibling</code></li>
+<li><code>nextSibling</code></li>
+<li><code>nodeValue</code></li>
+<li><code>firstChild</code></li>
+<li><code>childNodes</code></li>
+<li><code>lastChild</code></li>
+</ul>
+
+<a href="#screencasts" id="screencasts" style="color: inherit; text-decoration: none;">
+  <h2>Screencasts</h2>
+</a>
+<p><a href="https://vimeo.com/31950192">https://vimeo.com/31950192</a></p>
+<blockquote>
+<p>This video tutorial is a follow-up to Nettut&#39;s &quot;How to Scrape Web Pages with Node.js and jQuery&quot;, using cheerio instead of JSDOM + jQuery. This video shows how easy it is to use cheerio and how much faster cheerio is than JSDOM + jQuery.</p>
+</blockquote>
+
+<a href="#cheerio-in-the-real-world" id="cheerio-in-the-real-world" style="color: inherit; text-decoration: none;">
+  <h2>Cheerio in the real world</h2>
+</a>
+<p>Are you using cheerio in production? Add it to the <a href="https://github.com/cheeriojs/cheerio/wiki/Cheerio-in-Production">wiki</a>!</p>
+
+<a href="#sponsors" id="sponsors" style="color: inherit; text-decoration: none;">
+  <h2>Sponsors</h2>
+</a>
+<p>Does your company use Cheerio in production? Please consider <a href="https://github.com/cheeriojs/cheerio?sponsor=1">sponsoring this project</a>! Your help will allow maintainers to dedicate more time and resources to its development and support.</p>
+<!-- BEGIN SPONSORS: sponsor -->
+
+<a href="https://www.airbnb.com/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/airbnb/d327d66/logo.png" title="Airbnb" alt="Airbnb"></img>
+          </a>
+<a href="https://substack.com/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://avatars.githubusercontent.com/u/53023767?v=4&s=128" title="Substack" alt="Substack"></img>
+          </a>
+<a href="https://cryptocasinos.com/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/cryptocasinos/99b168e/logo.png" title="CryptoCasinos" alt="CryptoCasinos"></img>
+          </a>
+<a href="https://www.casinoonlineaams.com" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/casinoonlineaamscom/da74236/logo.png" title="Casinoonlineaams.com" alt="Casinoonlineaams.com"></img>
+          </a>
+<a href="https://casinofiables.com/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/casinofiables-com/b824bab/logo.png" title="Casinofiables.com" alt="Casinofiables.com"></img>
+          </a>
+<a href="https://www.cryptosnacks.org/bitcoin-casino/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/snack_crypto/a20c8a9/logo.png" title="Crypo SNACK" alt="Crypo SNACK"></img>
+          </a>
+<a href="https://casinoenlineahex.com/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/casinoenlinea-hex/b917401/logo.png" title="CasinoEnLineaHex" alt="CasinoEnLineaHex"></img>
+          </a>
+<a href="https://apify.com/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://avatars.githubusercontent.com/u/24586296?v=4&s=128" title="Apify" alt="Apify"></img>
+          </a>
+<a href="https://spin-paradise.com" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/spinparadise/fec1271/logo.png" title="Spin-Paradise" alt="Spin-Paradise"></img>
+          </a>
+
+<!-- END SPONSORS -->
+
+
+<a href="#backers" id="backers" style="color: inherit; text-decoration: none;">
+  <h2>Backers</h2>
+</a>
+<p><a href="https://github.com/cheeriojs/cheerio?sponsor=1">Become a backer</a> to show your support for Cheerio and help us maintain and improve this open source project.</p>
+<!-- BEGIN SPONSORS: backer -->
+
+<a href="https://medium.com/norch" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://images.opencollective.com/espenklem/6075b19/avatar.png" title="Espen Klem" alt="Espen Klem"></img>
+          </a>
+<a href="https://jarrodldavis.com" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://avatars.githubusercontent.com/u/235875?v=4&s=128" title="Jarrod Davis" alt="Jarrod Davis"></img>
+          </a>
+<a href="https://nishant-singh.com" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://avatars.githubusercontent.com/u/10304344?u=9cd1389a1a8211b64979ca3693f96d90f5bf0be9&v=4&s=128" title="Nishant Singh" alt="Nishant Singh"></img>
+          </a>
+<a href="https://github.com/gauthamchandra" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://avatars.githubusercontent.com/u/5430280?u=1115bcd3ed7aa8b2a62ff28f62ee4c2b92729903&v=4&s=128" title="Gautham Chandra" alt="Gautham Chandra"></img>
+          </a>
+<a href="http://www.dr-chuck.com/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://avatars.githubusercontent.com/u/1197222?u=d6dc85c064736ab851c6d9e3318dcdd1be00fb2c&v=4&s=128" title="Charles Severance" alt="Charles Severance"></img>
+          </a>
+<a href="https://kodfabrik.se/" target="_blank" rel="noopener noreferrer">
+            <img style="max-height:128px;max-width:128px" src="https://avatars.githubusercontent.com/u/34457?v=4&s=128" title="Pelle Wessman" alt="Pelle Wessman"></img>
+          </a>
+
+<!-- END SPONSORS -->
+
+
+<a href="#special-thanks" id="special-thanks" style="color: inherit; text-decoration: none;">
+  <h2>Special Thanks</h2>
+</a>
+<p>This library stands on the shoulders of some incredible developers. A special thanks to:</p>
+<p><strong>&#8226; @FB55 for node-htmlparser2 &amp; CSSSelect:</strong>
+Felix has a knack for writing speedy parsing engines. He completely re-wrote both @tautologistic&#39;s <code>node-htmlparser</code> and @harry&#39;s <code>node-soupselect</code> from the ground up, making both of them much faster and more flexible. Cheerio would not be possible without his foundational work</p>
+<p><strong>&#8226; @jQuery team for jQuery:</strong>
+The core API is the best of its class and despite dealing with all the browser inconsistencies the code base is extremely clean and easy to follow. Much of cheerio&#39;s implementation and documentation is from jQuery. Thanks guys.</p>
+<p><strong>&#8226; @visionmedia:</strong>
+The style, the structure, the open-source&quot;-ness&quot; of this library comes from studying TJ&#39;s style and using many of his libraries. This dude consistently pumps out high-quality libraries and has always been more than willing to help or answer questions. You rock TJ.</p>
+
+<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+  <h2>License</h2>
+</a>
+<p>MIT</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/Cheerio.html" class="tsd-kind-icon">Cheerio</a></li><li class="tsd-kind-class tsd-is-external"><a href="classes/Document.html" class="tsd-kind-icon">Document</a></li><li class="tsd-kind-class tsd-is-external"><a href="classes/Element.html" class="tsd-kind-icon">Element</a></li><li class="tsd-kind-class tsd-is-external"><a href="classes/Node.html" class="tsd-kind-icon">Node</a></li><li class="tsd-kind-class tsd-is-external"><a href="classes/NodeWithChildren.html" class="tsd-kind-icon">Node<wbr/>With<wbr/>Children</a></li><li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/CheerioAPI.html" class="tsd-kind-icon">CheerioAPI</a></li><li class="tsd-kind-interface"><a href="interfaces/CheerioOptions.html" class="tsd-kind-icon">Cheerio<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/HTMLParser2Options.html" class="tsd-kind-icon">HTMLParser2<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/Parse5Options.html" class="tsd-kind-icon">Parse5<wbr/>Options</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#AcceptedElems" class="tsd-kind-icon">Accepted<wbr/>Elems</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#AcceptedFilters" class="tsd-kind-icon">Accepted<wbr/>Filters</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#BasicAcceptedElems" class="tsd-kind-icon">Basic<wbr/>Accepted<wbr/>Elems</a></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#FilterFunction" class="tsd-kind-icon">Filter<wbr/>Function</a></li><li class="tsd-kind-type-alias"><a href="modules.html#SelectorType" class="tsd-kind-icon">Selector<wbr/>Type</a></li><li class="tsd-kind-property"><a href="modules.html#default" class="tsd-kind-icon">default</a></li><li class="tsd-kind-variable"><a href="modules.html#select" class="tsd-kind-icon">select</a></li><li class="tsd-kind-function"><a href="modules.html#contains" class="tsd-kind-icon">contains</a></li><li class="tsd-kind-function"><a href="modules.html#load" class="tsd-kind-icon">load</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#merge" class="tsd-kind-icon">merge</a></li><li class="tsd-kind-function"><a href="modules.html#parseHTML" class="tsd-kind-icon">parseHTML</a></li><li class="tsd-kind-function"><a href="modules.html#root" class="tsd-kind-icon">root</a></li></ul></nav></div></div></div><footer class=""><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="overlay"></div><script src="assets/main.js"></script></body></html>

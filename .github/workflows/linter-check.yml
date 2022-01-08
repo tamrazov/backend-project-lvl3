@@ -13,11 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: list files
-        run: ls -l
-
       - name: run install
-        run: npm i
+        run: make install
 
       - name: linter project check
-        run: npx eslint .
+        run: make lint

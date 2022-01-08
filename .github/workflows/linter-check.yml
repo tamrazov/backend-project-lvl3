@@ -11,6 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: list files
+        run: ls -l
+
       - name: run install
         run: npm i
 

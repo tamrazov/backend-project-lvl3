@@ -7,8 +7,17 @@ export default (url, output) => {
     const currentPath = getCurrentPath(url);
     pageLoading(url)
       .then((page) => {
-        fs.mkdir(`${output}/__files`, (err) => console.log(err));
-        fs.writeFile(`${output}/__files/${currentPath}`, page, (err) => {
+        fs.mkdir(`${output}/__files`, (err) => {
+          if (err) {
+            return;
+          }
+        });
+        fs.mkdir(`${output}/__files/${currentPath}`, (err) => {
+          if (err) {
+            return;
+          }
+        });
+        fs.writeFile(`${output}/__files/${currentPath}/${currentPath}.html`, page, (err) => {
           if (err) {
             console.log(err);
           }

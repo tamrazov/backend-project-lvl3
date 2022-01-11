@@ -1,28 +1,18 @@
 import nock from 'nock';
-import fs from 'fs';
+import fs from 'fs/promises';
 import pageLoading from '../src/utils.js';
 
 nock.disableNetConnect();
 let expectFile;
 
 beforeEach(async () => {
-  await fs.readFile(
-    './__fixtures__/ru-hexlet-io-courses.html',
-    'utf-8',
-    (err, data) => {
-      if (err) {
-        console.log(err);
-      }
-
-      expectFile = data;
-    },
-  );
+  expectFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses.html', 'utf-8');
 });
 
 test('first', async () => {
   nock('https://ru.hexlet.io')
     .get('/courses')
-    .reply(200);
+    .reply(200, expectFile);
 
   const page = await pageLoading('https://ru.hexlet.io/courses');
 

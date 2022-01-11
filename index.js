@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import getCurrentPath from './src/currentPath.js';
 import pageLoading from './src/utils.js';
 
@@ -7,21 +7,13 @@ export default (url, output) => {
     const currentPath = getCurrentPath(url);
     pageLoading(url)
       .then((page) => {
-        fs.mkdir(`${output}/__files`, (err) => {
-          if (err) {
-            return;
-          }
-        });
-        fs.mkdir(`${output}/__files/${currentPath}`, (err) => {
-          if (err) {
-            return;
-          }
-        });
-        fs.writeFile(`${output}/__files/${currentPath}/${currentPath}.html`, page, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
+        fs.mkdir(`${output}/__files`)
+          .then(() => {
+            fs.mkdir(`${output}/__files/${currentPath}`)
+              .then(() => {
+                fs.writeFile(`${output}/__files/${currentPath}/${currentPath}.html`, page);
+              });
+          });
       })
       .catch((err) => {
         console.log(err);

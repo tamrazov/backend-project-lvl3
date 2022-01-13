@@ -8,12 +8,6 @@ export const pageLoading = (path) => axios.get(path)
 
 export const mkdir = (path, data) => fs.access(path, constants.R_OK)
   .then(() => Promise.resolve(data))
-  .catch(() => fs.mkdir(path, (err) => {
-    if (!err) {
-      return new Promise((res) => {
-        res(data);
-      });
-    }
-
-    return Promise.reject(new Error('error!'));
-  }));
+  .catch(() => fs.mkdir(path))
+  .then(() => new Promise((res) => res(data)))
+  .catch(() => Promise.reject(new Error('error!')));

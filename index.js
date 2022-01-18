@@ -21,14 +21,15 @@ export default (url, output) => {
         console.log(images.length)
 
         if (images.length) {
-          // images.each((i, el) => {
-          //   console.log(el.attribs.src)
-          //   const name = `${output}/${currentPath}_files/sad${i}.jpg`;
-          //   fetchResourse(el.attribs.src, name)
-          //     .then(() => {
-          //       console.log('done');
-          //     });
-          // });
+          images.each((i, el) => {
+            if (el.attribs.src) {
+              const name = `${output}/${currentPath}_files/${getCurrentPath(el.attribs.src)}.png`;
+              fetchResourse(el.attribs.src, name)
+                .then(() => {
+                  console.log('done');
+                });
+            }
+          });
         }
       })
       .catch((err) => console.log(err));

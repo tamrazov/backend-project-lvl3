@@ -5,11 +5,10 @@ const asdf = (part) => {
 }
 
 const getCurrentPath = (path) => {
-  const { dir, name, ext } = parse(path);
-  const [, parts] = dir.split('://');
-  const result = parts.split('/').map((part) => asdf(part)).join('-');
+  const { dir, base,  name, ext } = parse(path);
+  console.log(parse(path))
 
-  return `${result}-${name}`;
+  return `${asdf(base)}-${asdf(name)}`;
 };
 
 export default getCurrentPath;

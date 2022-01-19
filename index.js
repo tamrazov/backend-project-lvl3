@@ -26,7 +26,12 @@ export default (url, output) => {
               const name = `${output}/${currentPath}_files/${getCurrentPath(el.attribs.src)}.png`;
               fetchResourse(el.attribs.src, name)
                 .then(() => {
-                  console.log('done');
+                  fs.readFile(`${output}/${currentPath}.html`)
+                    .then((file) => {
+                      const $ = cheerio.load(file);
+                      $('img').attr('src', name);
+                      fs.writeFile();
+                    })
                 });
             }
           });

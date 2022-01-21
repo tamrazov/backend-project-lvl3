@@ -18,20 +18,25 @@ export default (url, output) => {
       .then((page) => {
         const $ = cheerio.load(page);
         const images = $('img');
-        console.log(images.length)
+        const scripts = $('script');
+        const resourses = [images[0], scripts[0]];
 
-        if (images.length) {
-          images.each((i, el) => {
+        if (scripts.length) {
+          scripts.each((i, el) => {
+            if (i > 2) {
+              return;
+            }
             if (el.attribs.src) {
-              const name = `${output}/${currentPath}_files/${getCurrentPath(el.attribs.src)}.png`;
+              const name = `${output}/${currentPath}_files/${el.attribs.src}`;
+              console.log(el.attribs.src)
               fetchResourse(el.attribs.src, name)
                 .then(() => {
-                  fs.readFile(`${output}/${currentPath}.html`)
-                    .then((file) => {
-                      const $ = cheerio.load(file);
-                      $('img').attr('src', name);
-                      fs.writeFile();
-                    })
+                  // fs.readFile(`${output}/${currentPath}.html`)
+                  //   .then((file) => {
+                  //     const $ = cheerio.load(file);
+                  //     $('img').attr('src', name);
+                  //     fs.writeFile();
+                  //   })
                 });
             }
           });

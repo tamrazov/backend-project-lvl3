@@ -5,42 +5,43 @@ import cheerio from 'cheerio';
 import getCurrentPath from './src/currentPath.js';
 import { fetchPage, fetchResourse } from './src/utils.js';
 
+const extractResourses = (html, outputPath) => {
+  const $ = cheerio.load(html);
+  const images = $('img');
+  const resourses = [];
+
+  images.each((i, el) => {
+    if (!el.attribs.src || i > 4) {
+      return;
+    }
+    const src = el.attribs.src;
+    const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
+    resourses.push({
+      path: src,
+      name: resoursePath,
+    });
+    $(el).attr('src', resoursePath);
+  })
+
+  return { resourses, html: $.html() };
+}
+
 export default (url, output) => {
   if (url) {
     const currentPath = getCurrentPath(url);
     fetchPage(url)
-      .then((page) => fs.writeFile(`${output}/${currentPath}.html`, page)
-        .then(() => fs.access(`${output}/${currentPath}`, constants.R_OK)
+      // .then((page) => fs.writeFile(`${output}/${currentPath}.html`, page)
+        .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
           .then(() => fs.mkdir(`${output}/${currentPath}_files`).then(() => page))
           .catch(() => fs.mkdir(`${output}/${currentPath}_files`, { recursive: true })
             .then(() => page),
-          )))
+          ))
       .then((page) => {
-        const $ = cheerio.load(page);
-        const images = $('img');
-        const scripts = $('script');
-        const resourses = [images[0], scripts[0]];
-
-        if (scripts.length) {
-          scripts.each((i, el) => {
-            if (i > 2) {
-              return;
-            }
-            if (el.attribs.src) {
-              const name = `${output}/${currentPath}_files/${el.attribs.src}`;
-              console.log(el.attribs.src)
-              fetchResourse(el.attribs.src, name)
-                .then(() => {
-                  // fs.readFile(`${output}/${currentPath}.html`)
-                  //   .then((file) => {
-                  //     const $ = cheerio.load(file);
-                  //     $('img').attr('src', name);
-                  //     fs.writeFile();
-                  //   })
-                });
-            }
-          });
-        }
+        const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
+        Promise.all(resourses.map(({path, name}, i) => {
+          return fetchResourse(path, name);
+        }))
+          .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
       })
       .catch((err) => console.log(err));
   }

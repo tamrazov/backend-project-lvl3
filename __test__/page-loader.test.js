@@ -1,6 +1,7 @@
 import nock from 'nock';
 import fs from 'fs/promises';
 import { fetchPage } from '../src/utils.js';
+import loadPage from '../index.js';
 
 nock.disableNetConnect();
 let expectFile;
@@ -14,12 +15,12 @@ test('async page loading', async () => {
     .get('/courses')
     .reply(200, expectFile);
 
-  const page = await fetchPage('https://ru.hexlet.io/courses');
+  const page = await loadPage('https://ru.hexlet.io/courses', process.cwd());
 
   expect(page).toBe(expectFile);
 });
 
-test('page loading with resources', async () => {
+test.skip('page loading with resources', async () => {
   // const asdf = fetchResourses(expectFile);
   // expect(expectFile).toBe(asdf);
 });

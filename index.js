@@ -8,23 +8,25 @@ import { fetchPage, fetchResourse } from './src/utils.js';
 const extractResourses = (html, outputPath) => {
   const $ = cheerio.load(html);
   const images = $('img').toArray();
-  const links = $('link').toArray();
+  // const links = $('link').toArray();
   const scripts = $('script').toArray();
-  const data = [...images, ...links, ...scripts];
+  const data = [...images, ...scripts];
 
   const resourses = data.map((el, i) => {
-    if (!el.attribs.src) {
-      return;
-    }
-    const src = el.attribs.src;
-    const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
-    $(el).attr('src', resoursePath);
+    if (el.attribs.src && el.attribs.src.charAt(0) === '/') {
+      const src = el.attribs.src;
+      console.log(src)
+      // const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
+      $(el).attr('src', src);
 
-    return {
-      path: src,
-      name: resoursePath,
-    };
-  })
+      return {
+        path: src,
+        name: src,
+      };
+    }
+
+    return;
+  }).filter((el) => el.path);
 
   return { resourses, html: $.html() };
 }

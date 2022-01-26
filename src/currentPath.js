@@ -6,7 +6,6 @@ const asdf = (part) => {
 
 const getCurrentPath = (path) => {
   const { dir, base,  name, ext } = parse(path);
-  console.log(parse(path))
 
   return `${asdf(base)}-${asdf(name)}`;
 };

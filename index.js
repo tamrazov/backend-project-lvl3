@@ -7,20 +7,23 @@ import { fetchPage, fetchResourse } from './src/utils.js';
 
 const extractResourses = (html, outputPath) => {
   const $ = cheerio.load(html);
-  const images = $('img');
-  const resourses = [];
+  const images = $('img').toArray();
+  const links = $('link').toArray();
+  const scripts = $('script').toArray();
+  const data = [...images, ...links, ...scripts];
 
-  images.each((i, el) => {
-    if (!el.attribs.src || i > 4) {
+  const resourses = data.map((el, i) => {
+    if (!el.attribs.src) {
       return;
     }
     const src = el.attribs.src;
     const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
-    resourses.push({
+    $(el).attr('src', resoursePath);
+
+    return {
       path: src,
       name: resoursePath,
-    });
-    $(el).attr('src', resoursePath);
+    };
   })
 
   return { resourses, html: $.html() };
@@ -38,10 +41,11 @@ export default (url, output) => {
           ))
       .then((page) => {
         const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
-        Promise.all(resourses.map(({path, name}, i) => {
-          return fetchResourse(path, name);
-        }))
-          .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
+        console.log(resourses)
+        // Promise.all(resourses.map(({path, name}, i) => {
+        //   return fetchResourse(path, name);
+        // }))
+        //   .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
       })
       .catch((err) => console.log(err));
   }

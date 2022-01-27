@@ -5,9 +5,10 @@ const asdf = (part) => {
 }
 
 const getCurrentPath = (path) => {
-  const { dir, base,  name, ext } = parse(path);
+  const { name, ext } = parse(path);
+  const curBase = name.split('?')[0];
 
-  return `${asdf(base)}-${asdf(name)}`;
+  return `${asdf(curBase)}${ext ?? '.jpg'}`;
 };
 
 export default getCurrentPath;

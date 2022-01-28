@@ -1,13 +1,35 @@
 import axios from 'axios';
 import fs from 'fs';
+import 'axios-debug-log';
+import debug from 'debug';
 
-export const fetchPage = (path) => axios.get(path)
-  .then((response) => response.data)
-  .catch((err) => console.log(err));
+debug('booting %o', 'page-loader');
 
-export const fetchResourse = (path, name) => axios({
-  method: 'get',
-  url: path,
-  responseType: 'stream',
-})
-  .then((response) => response.data.pipe(fs.createWriteStream(name)));
+export const fetchPage = (path) => {
+  debug(`fetch file from ${path}`);
+  return axios.get(path)
+    .then((response) => {
+      debug(`success fetch file ${response.status}`);
+      return response.data;
+    })
+    .catch((err) => {
+      debug(`fetch error ${err}`);
+      return Promise.reject(
+        `Sorry! Error from ${err.response.config.url}, status request ${err.response.status}`
+      );
+    });
+}
+
+export const fetchResourse = (path, name) => {
+  debug(`fetch resource from ${path}`);
+
+  return axios({
+    method: 'get',
+    url: path,
+    responseType: 'stream',
+  })
+    .then((response) => {
+      debug(`success fetch resource ${response.status}`);
+      return response.data.pipe(fs.createWriteStream(name))
+    });
+};

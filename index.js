@@ -5,6 +5,7 @@ import cheerio from 'cheerio';
 import getCurrentPath from './src/currentPath.js';
 import { fetchPage, fetchResourse } from './src/utils.js';
 import debug from 'debug';
+import Listr from 'listr';
 
 debug('booting %o', 'page-loader');
 debug('sksdjfksdjfskdjf hello!')
@@ -45,10 +46,14 @@ export default (url, output) => {
         ))
       .then((page) => {
         const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
-        Promise.allSettled(resourses.map(({path, name}, i) => {
+        const tasks = new Listr(Promise.allSettled(resourses.map(({path, name}, i) => {
           return fetchResourse(path, name);
-        }))
-          .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
+        })))
+        tasks.run()
+        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
+        .catch(err => {
+          console.error(err);
+        });        
       })
       .catch((err) => {
         console.error(err);

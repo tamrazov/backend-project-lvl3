@@ -1,9 +1,13 @@
 import fs from 'fs/promises';
 import { constants } from 'fs';
-import { parse } from 'path';
 import cheerio from 'cheerio';
+// import debug from 'axios-debug-log';
 import getCurrentPath from './src/currentPath.js';
 import { fetchPage, fetchResourse } from './src/utils.js';
+import debug from 'debug';
+
+debug('booting %o', 'page-loader');
+debug('sksdjfksdjfskdjf hello!')
 
 const extractResourses = (html, outputPath) => {
   const $ = cheerio.load(html);

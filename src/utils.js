@@ -14,7 +14,9 @@ export const fetchPage = (path) => {
     })
     .catch((err) => {
       debug(`fetch error ${err}`);
-      return Promise.reject(err);
+      return Promise.reject(
+        `Sorry! Error from ${err.response.config.url}, status request ${err.response.status}`
+      );
     });
 }
 

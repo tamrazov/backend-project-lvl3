@@ -15,7 +15,7 @@ test('async page loading', async () => {
     .get('/courses')
     .reply(200, expectFile);
 
-  const page = await loadPage('https://ru.hexlet.io/courses', process.cwd());
+  await loadPage('https://ru.hexlet.io/courses', process.cwd());
 
   expect(page).toBe(expectFile);
 });
@@ -47,9 +47,11 @@ test('not connect test', async () => {
 
 });
 
+test('test not url', async () => {
+  await expect(loadPage('', process.cwd()))
+    .rejects;
+});
 
-// offline
+test('test not access', () => {
 
-// not access
-
-// not url
+});

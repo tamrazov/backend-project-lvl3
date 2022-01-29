@@ -5,11 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test-debug": "@powershell -Command $env:DEBUG='nock.*';node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "windowsDebug": "@powershell -Command $env:DEBUG='axios';node index.js"
+    "test-debug": "@powershell -Command $env:DEBUG='nock.*,axios';node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "bin": {
-    "page-loader": "@powershell -Command $env:DEBUG='axios';bin/page-loader.js"
+    "page-loader": "bin/page-loader.js"
   },
   "type": "module",
   "author": "",

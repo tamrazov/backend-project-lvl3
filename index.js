@@ -6,9 +6,13 @@ import getCurrentPath from './src/currentPath.js';
 import { fetchPage, fetchResourse } from './src/utils.js';
 import debug from 'debug';
 import Listr from 'listr';
+import axios from 'axios';
 
 debug('booting %o', 'page-loader');
-debug('sksdjfksdjfskdjf hello!')
+debug('sksdjfksdjfskdjf hello!');
+
+axios.get('google.com')
+  .then(() => console.log('hello from Google!'));
 
 const extractResourses = (html, outputPath) => {
   const $ = cheerio.load(html);
@@ -36,27 +40,20 @@ const extractResourses = (html, outputPath) => {
 }
 
 export default (url, output) => {
-  if (url) {
-    const currentPath = getCurrentPath(url);
-    return fetchPage(url)
-      .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
-        .then(() => fs.mkdir(`${output}/${currentPath}_files`).then(() => page))
-        .catch(() => fs.mkdir(`${output}/${currentPath}_files`, { recursive: true })
-          .then(() => page),
-        ))
-      .then((page) => {
-        const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
-        const tasks = new Listr(Promise.allSettled(resourses.map(({path, name}, i) => {
-          return fetchResourse(path, name);
-        })))
-        tasks.run()
-        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
-        .catch(err => {
-          console.error(err);
-        });        
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
+  const currentPath = getCurrentPath(url);
+  return fetchPage(url)
+    .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
+      .then(() => fs.mkdir(`${output}/${currentPath}_files`).then(() => page))
+      .catch(() => fs.mkdir(`${output}/${currentPath}_files`, { recursive: true })
+        .then(() => page),
+      ))
+    .then((page) => {
+      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
+      const tasks = new Listr(Promise.allSettled(resourses.map(({path, name}, i) => {
+        return fetchResourse(path, name);
+      })))
+      tasks.run()
+      .then(() => fs.writeFile(`${output}/${currentPath}.html`, html));
+      // увидели ошибку и завершили с нужным кодом.
+    })
 };

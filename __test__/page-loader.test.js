@@ -25,11 +25,31 @@ test.skip('page loading with resources', async () => {
   // expect(expectFile).toBe(asdf);
 });
 
-test('error 404 fetch page', async () => {
+test('error 4xx fetch page', async () => {
   nock('https://ru.hexlet.io')
     .get('/coursesssss')
-    .reply(404, 'Sorry! Error from https://ru.hexlet.io/sakdlsad, status request 405');
+    .reply(404);
 
-  expect(loadPage('https://ru.hexlet.io/coursesssss', process.cwd()))
-    .rejects.toMatch('Sorry! Error from https://ru.hexlet.io/sakdlsad, status request 404');
+  await expect(loadPage('https://ru.hexlet.io/coursesssss', process.cwd()))
+    .rejects.toMatch('Sorry! Error from https://ru.hexlet.io/coursesssss, status request 404');
 });
+
+test('error 5xx fetch page', async () => {
+  nock('https://ru.hexlet.io')
+    .get('/courses')
+    .reply(500);
+
+  await expect(loadPage('https://ru.hexlet.io/courses', process.cwd()))
+    .rejects.toMatch('Sorry! Error from https://ru.hexlet.io/courses, status request 500');
+});
+
+test('not connect test', async () => {
+
+});
+
+
+// offline
+
+// not access
+
+// not url

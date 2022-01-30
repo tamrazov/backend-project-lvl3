@@ -15,8 +15,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "axios-debug-log": "0.8.4",
-    "debug": "4.3.3",
     "eslint": "8.5.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.25.3",
@@ -25,6 +23,8 @@
     "nock": "13.2.1"
   },
   "dependencies": {
+    "axios-debug-log": "0.8.4",
+    "debug": "4.3.3",
     "acorn": "8.6.0",
     "acorn-jsx": "5.3.2",
     "axios": "0.24.0",

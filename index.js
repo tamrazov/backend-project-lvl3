@@ -1,12 +1,12 @@
 import fs from 'fs/promises';
-import { constants } from 'fs';
+import { exit } from 'process';
+import axios from 'axios';
 import cheerio from 'cheerio';
-// import debug from 'axios-debug-log';
-import getCurrentPath from './src/currentPath.js';
-import { fetchPage, fetchResourse } from './src/utils.js';
 import debug from 'debug';
 import Listr from 'listr';
-import { exit } from 'process';
+import { constants } from 'fs';
+import getCurrentPath from './src/currentPath.js';
+import fetchPage from './src/utils.js';
 
 debug('booting %o', 'page-loader');
 
@@ -17,23 +17,19 @@ const extractResourses = (html, outputPath) => {
   const scripts = $('script').toArray();
   const data = [...images, ...scripts];
 
-  const resourses = data.map((el, i) => {
-    if (el.attribs.src) {
-      const src = el.attribs.src;
-      const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
-      $(el).attr('src', src);
+  const resourses = data.filter((el) => el.attribs.src).map((el) => {
+    const { src } = el.attribs;
+    const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
+    $(el).attr('src', src);
 
-      return {
-        path: src,
-        name: resoursePath,
-      };
-    }
+    return {
+      path: src,
+      name: resoursePath,
+    };
+  });
 
-    return;
-  }).filter((el) => el);
-
-  return {resourses, html: $.html()};
-}
+  return { resourses, html: $.html() };
+};
 
 export default (url, output) => {
   const currentPath = getCurrentPath(url);
@@ -42,17 +38,30 @@ export default (url, output) => {
     .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
       .then(() => fs.mkdir(`${output}/${currentPath}_files`).then(() => page))
       .catch(() => fs.mkdir(`${output}/${currentPath}_files`, { recursive: true })
-        .then(() => page),
-      ))
+        .then(() => page)))
     .then((page) => {
       const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
-      const tasks = new Listr(
-        Promise.allSettled(resourses.map(({path, name}, i) => {
-        return fetchResourse(path, name)
-      }))
-        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
-        .then(() => exit(0))
-      );
+      const resoursesDownload = resourses.filter((_, i) => i < 5).map(({ path, name }) => ({
+        title: name,
+        task: () => axios({
+          method: 'get',
+          url: path,
+          responseType: 'stream',
+        })
+          .then((response) => {
+            debug(`success fetch resource ${response.status}`);
+            return response.data.pipe(fs.createWriteStream(name));
+          })
+          .catch((err) => {
+            debug(`fetch error ${err}`);
+            console.error(err);
+            exit(1);
+          }),
+      }));
+      const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });
+
       tasks.run();
-    })
+      fs.writeFile(`${output}/${currentPath}.html`, html);
+      // exit(0);
+    });
 };

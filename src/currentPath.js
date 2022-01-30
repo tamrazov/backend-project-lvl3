@@ -1,8 +1,6 @@
 import { parse } from 'path';
 
-const asdf = (part) => {
-  return part.split('.').join('-');
-}
+const asdf = (part) => part.split('.').join('-');
 
 const getCurrentPath = (path) => {
   const { name, ext } = parse(path);

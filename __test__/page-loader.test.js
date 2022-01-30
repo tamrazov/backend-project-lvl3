@@ -1,6 +1,6 @@
 import nock from 'nock';
 import fs from 'fs/promises';
-import { fetchPage } from '../src/utils.js';
+// import { fetchPage } from '../src/utils.js';
 import loadPage from '../index.js';
 
 nock.disableNetConnect();
@@ -47,9 +47,9 @@ test('not connect test', async () => {
 
 });
 
-test('test not url', async () => {
+test.skip('not url', async () => {
   await expect(loadPage('', process.cwd()))
-    .rejects;
+    .rejects.toMatch('kajdsak');
 });
 
 test.skip('test not access', () => {

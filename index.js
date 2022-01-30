@@ -46,12 +46,13 @@ export default (url, output) => {
       ))
     .then((page) => {
       const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
-      const tasks = new Listr(Promise.allSettled(resourses.map(({path, name}, i) => {
-        return fetchResourse(path, name);
-      })))
-      tasks.run()
-      .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
-      .then(() => exit(0));
-      // увидели ошибку и завершили с нужным кодом.
+      const tasks = new Listr(
+        Promise.allSettled(resourses.map(({path, name}, i) => {
+        return fetchResourse(path, name)
+      }))
+        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
+        .then(() => exit(0))
+      );
+      tasks.run();
     })
 };

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test-debug": "@powershell -Command $env:DEBUG='nock.*,axios';node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test-debug": "@powershell -Command $env:DEBUG='nock.*,axios';node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "@powershell -Command $env:DEBUG='axios';node bin/page-loader.js https://github.com"
   },
   "bin": {
     "page-loader": "bin/page-loader.js"

@@ -2,6 +2,7 @@ import axios from 'axios';
 import fs from 'fs';
 import 'axios-debug-log';
 import debug from 'debug';
+import { exit } from 'process';
 
 debug('booting %o', 'page-loader');
 
@@ -14,9 +15,8 @@ export const fetchPage = (path) => {
     })
     .catch((err) => {
       debug(`fetch error ${err}`);
-      return Promise.reject(
-        `Sorry! Error from ${err.response.config.url}, status request ${err.response.status}`
-      );
+      console.error(err);
+      exit(1);
     });
 }
 
@@ -31,5 +31,10 @@ export const fetchResourse = (path, name) => {
     .then((response) => {
       debug(`success fetch resource ${response.status}`);
       return response.data.pipe(fs.createWriteStream(name))
+    })
+    .catch(() => {
+      debug(`fetch error ${err}`);
+      console.error(err);
+      exit(1);
     });
 };

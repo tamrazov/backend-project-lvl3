@@ -6,13 +6,9 @@ import getCurrentPath from './src/currentPath.js';
 import { fetchPage, fetchResourse } from './src/utils.js';
 import debug from 'debug';
 import Listr from 'listr';
-import axios from 'axios';
+import { exit } from 'process';
 
 debug('booting %o', 'page-loader');
-debug('sksdjfksdjfskdjf hello!');
-
-axios.get('google.com')
-  .then(() => console.log('hello from Google!'));
 
 const extractResourses = (html, outputPath) => {
   const $ = cheerio.load(html);
@@ -41,6 +37,7 @@ const extractResourses = (html, outputPath) => {
 
 export default (url, output) => {
   const currentPath = getCurrentPath(url);
+
   return fetchPage(url)
     .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
       .then(() => fs.mkdir(`${output}/${currentPath}_files`).then(() => page))
@@ -53,7 +50,8 @@ export default (url, output) => {
         return fetchResourse(path, name);
       })))
       tasks.run()
-      .then(() => fs.writeFile(`${output}/${currentPath}.html`, html));
+      .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
+      .then(() => exit(0));
       // увидели ошибку и завершили с нужным кодом.
     })
 };

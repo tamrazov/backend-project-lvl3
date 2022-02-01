@@ -10,7 +10,7 @@ program
   .arguments('[url]')
   .action((url) => {
     if (!url) {
-      exit(126);
+      exit(1);
     }
     const { output } = program.opts();
     main(url, output);

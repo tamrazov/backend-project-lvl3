@@ -1,5 +1,4 @@
 import fs from 'fs/promises';
-import { exit } from 'process';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import debug from 'debug';

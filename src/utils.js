@@ -1,7 +1,6 @@
 import axios from 'axios';
 import 'axios-debug-log';
 import debug from 'debug';
-import { exit } from 'process';
 
 debug('booting %o', 'page-loader');
 
@@ -15,7 +14,6 @@ export default (path) => {
     .catch((err) => {
       debug(`fetch error ${err}`);
       console.error(err);
-      exit(1);
     });
 };
 

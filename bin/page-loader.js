@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { exit } from 'process';
 import main from '../index.js';
 
 const program = new Command();
@@ -11,7 +10,6 @@ program
   .action((url) => {
     if (!url) {
       console.error('error: missing required argument \'url\'');
-      exit(1);
     }
     const { output } = program.opts();
     main(url, output);

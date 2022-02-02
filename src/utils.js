@@ -15,7 +15,7 @@ export default (path) => {
     .catch((err) => {
       debug(`fetch error ${err}`);
       console.error(err);
-      exit(2);
+      exit(1);
     });
 };
 

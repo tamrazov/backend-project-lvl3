@@ -55,7 +55,6 @@ export default (url, output) => {
           .catch((err) => {
             debug(`fetch error ${err}`);
             console.error(err);
-            exit(2);
           }),
       }));
       const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });

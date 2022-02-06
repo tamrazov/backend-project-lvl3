@@ -32,6 +32,7 @@ const extractResourses = (html, outputPath) => {
 
 export default (url, output) => {
   const currentPath = getCurrentPath(url);
+  console.log(currentPath, output)
 
   return fetchPage(url)
     .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
@@ -58,8 +59,8 @@ export default (url, output) => {
       }));
       const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });
 
-      tasks.run();
-      fs.writeFile(`${output}/${currentPath}.html`, html);
+      return tasks.run()
+        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html));
       // exit(0);
-    });
+    })
 };

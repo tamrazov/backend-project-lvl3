@@ -40,11 +40,9 @@ test('async page loading', async () => {
 //   nock('https://ru.hexlet.io')
 //     .get('/coursesssss')
 //     .reply(404);
-//   const res = loadPage('https://ru.hexlet.io/coursesssss', process.cwd());
-//   console.log(typeof res)
 
-//   // await expect(res.)
-//   //   .rejects.toMatch('Sorry! Error from https://ru.hexlet.io/coursesssss, status request 404');
+//   await expect(loadPage('https://ru.hexlet.io/coursesssss', process.cwd()))
+//     .rejects;
 // });
 
 // test('error 5xx fetch page', async () => {

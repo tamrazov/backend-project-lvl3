@@ -4,7 +4,7 @@ import debug from 'debug';
 
 debug('booting %o', 'page-loader');
 
-export default (path) => {
+export const fetchPage = (path) => {
   debug(`fetch file from ${path}`);
   return axios.get(path)
     .then((response) => {
@@ -16,6 +16,13 @@ export default (path) => {
       console.error(err);
     });
 };
+
+export const getCurrentPath = (path) => {
+  const [, name] = path.split('://');
+  const curName = name.replace(/([.\/])/gi, '-');
+
+  return curName;
+}
 
 // export const fetchResourse = (path, name) => {
 //   debug(`fetch resource from ${path}`);

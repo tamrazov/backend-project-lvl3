@@ -4,8 +4,7 @@ import cheerio from 'cheerio';
 import debug from 'debug';
 import Listr from 'listr';
 import { constants } from 'fs';
-import getCurrentPath from './src/currentPath.js';
-import fetchPage from './src/utils.js';
+import { fetchPage, getCurrentPath } from './src/utils.js';
 
 debug('booting %o', 'page-loader');
 
@@ -32,7 +31,6 @@ const extractResourses = (html, outputPath) => {
 
 export default (url, output) => {
   const currentPath = getCurrentPath(url);
-  console.log(currentPath, output)
 
   return fetchPage(url)
     .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)

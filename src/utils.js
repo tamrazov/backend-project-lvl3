@@ -18,7 +18,12 @@ export const fetchPage = (path) => {
 };
 
 export const getCurrentPath = (path) => {
-  const [, name] = path.split('://');
+  let name;
+  if (path.includes('://')) {
+    name = path.split('://')['1'];
+  } else {
+    name = path;
+  }
   const curName = name.replace(/([.\/])/gi, '-');
 
   return curName;

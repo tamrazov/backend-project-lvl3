@@ -15,16 +15,18 @@ const extractResourses = (html, outputPath) => {
   const scripts = $('script').toArray();
   const data = [...images, ...scripts];
 
-  const resourses = data.filter((el) => el.attribs.src).map((el) => {
-    const { src } = el.attribs;
-    const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
-    $(el).attr('src', src);
+  const resourses = data
+    .filter((el) => el.attribs.src && el.attribs.src.charAt(0) === '/')
+    .map((el) => {
+      const { src } = el.attribs;
+      const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
+      $(el).attr('src', src);
 
-    return {
-      path: src,
-      name: resoursePath,
-    };
-  });
+      return {
+        path: src,
+        name: resoursePath,
+      };
+    });
 
   return { resourses, html: $.html() };
 };

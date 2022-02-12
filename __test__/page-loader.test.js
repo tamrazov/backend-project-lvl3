@@ -25,7 +25,7 @@ test('async page loading', async () => {
   await loadPage('https://ru.hexlet.io/courses', outputPath);
   const file = await fs.readFile(path.join(
     outputPath,
-    'courses.html'
+    'ru-hexlet-io-courses.html'
   ), 'utf-8');
 
   expect(file).toBe(expectFile);

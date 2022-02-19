@@ -49,6 +49,14 @@ test('404', async () => {
     .rejects.toThrowError('Request failed with status code 404');
 });
 
+test('500', async () => {
+  nock('https://ru.hexlet.io')
+    .get('/courses')
+    .reply(500);
+
+  await expect(loadPage('https://ru.hexlet.io/courses', outputPath))
+    .rejects.toThrowError('Request failed with status code 500');
+});
 
 // test.skip('page loading with resources', async () => {
 //   // const asdf = fetchResourses(expectFile);

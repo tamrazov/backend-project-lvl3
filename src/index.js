@@ -16,7 +16,7 @@ const extractResourses = (html, outputPath, currentPath) => {
   const data = [...images, ...scripts];
 
   const resourses = data
-    .filter((el) => el.attribs.src)
+    .filter((el) => el.attribs.src && el.attribs.src.startsWith('/'))
     .map((el) => {
       const src = el.attribs.src
       const { dir, name, ext } = path.parse(src);

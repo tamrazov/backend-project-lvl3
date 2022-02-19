@@ -4,22 +4,23 @@ import cheerio from 'cheerio';
 import debug from 'debug';
 import Listr from 'listr';
 import { constants } from 'fs';
-import { fetchPage, getCurrentPath } from './src/utils.js';
+import path from 'path';
+import { fetchPage, getCurrentPath } from './utils.js';
 
 debug('booting %o', 'page-loader');
 
-const extractResourses = (html, outputPath) => {
+const extractResourses = (html, outputPath, currentPath) => {
   const $ = cheerio.load(html);
   const images = $('img').toArray();
-  // const links = $('link').toArray();
   const scripts = $('script').toArray();
   const data = [...images, ...scripts];
 
   const resourses = data
-    .filter((el) => el.attribs.src && el.attribs.src.charAt(0) === '/')
+    .filter((el) => el.attribs.src)
     .map((el) => {
-      const { src } = el.attribs;
-      const resoursePath = `${outputPath}/${getCurrentPath(src)}`;
+      const src = el.attribs.src
+      const { dir, name, ext } = path.parse(src);
+      const resoursePath = `${outputPath}/${currentPath}-${getCurrentPath(`${dir}/${name}`, ext)}`;
       $(el).attr('src', src);
 
       return {
@@ -32,7 +33,9 @@ const extractResourses = (html, outputPath) => {
 };
 
 export default (url, output) => {
-  const currentPath = getCurrentPath(url);
+  const { dir, name } = path.parse(url);
+  const currentPath = getCurrentPath(`${dir}/${name}`);
+  console.log(dir, name, currentPath);
 
   return fetchPage(url)
     .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
@@ -40,17 +43,17 @@ export default (url, output) => {
       .catch(() => fs.mkdir(`${output}/${currentPath}_files`, { recursive: true })
         .then(() => page)))
     .then((page) => {
-      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`);
-      const resoursesDownload = resourses.filter((_, i) => i < 5).map(({ path, name }) => ({
+      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files/`, currentPath);
+      const resoursesDownload = resourses.map(({ path, name }) => ({
         title: name,
         task: () => axios({
           method: 'get',
-          url: path,
-          responseType: 'stream',
+          url: `${dir}${path}`,
+          responseType: 'arraybuffer',
         })
-          .then((response) => {
-            debug(`success fetch resource ${response.status}`);
-            return response.data.pipe(fs.createWriteStream(name));
+          .then(({data, status}) => {
+            debug(`success fetch resource ${status}`);
+            return fs.writeFile(name, data);
           })
           .catch((err) => {
             debug(`fetch error ${err}`);

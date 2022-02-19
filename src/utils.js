@@ -13,20 +13,24 @@ export const fetchPage = (path) => {
     })
     .catch((err) => {
       debug(`fetch error ${err}`);
-      console.error(err);
+      throw err;
     });
 };
 
-export const getCurrentPath = (path) => {
-  let name;
-  if (path.includes('://')) {
-    name = path.split('://')['1'];
-  } else {
-    name = path;
+export const getCurrentPath = (string, ext = '') => {
+  if (string.charAt(0) === '/') {
+    string = string.slice(1)
   }
-  const curName = name.replace(/([.\/])/gi, '-');
 
-  return curName;
+  let curName;
+  if (string.includes('://')) {
+    curName = string.split('://')['1'];
+  } else {
+    curName = string;
+  }
+  const curResult = curName.replace(/([.\/])/gi, '-');
+
+  return `${curResult}${ext}`;
 }
 
 // export const fetchResourse = (path, name) => {

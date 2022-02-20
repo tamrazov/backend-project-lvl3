@@ -8,9 +8,6 @@ program
   .option('-o, --output [dir]', 'output dir (default: "/home/user/current-dir")', process.cwd())
   .arguments('<url>')
   .action((url) => {
-    if (!url) {
-      console.error('error: missing required argument \'url\'');
-    }
     const { output } = program.opts();
     main(url, output);
   });

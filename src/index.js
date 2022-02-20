@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import * as url from "url";
 import axios from 'axios';
 import cheerio from 'cheerio';
 import debug from 'debug';
@@ -9,19 +10,32 @@ import { fetchPage, getCurrentPath } from './utils.js';
 
 debug('booting %o', 'page-loader');
 
-const extractResourses = (html, outputPath, currentPath) => {
+const extractResourses = (html, outputPath, currentPath, mainHost) => {
   const $ = cheerio.load(html);
   const images = $('img').toArray();
   const scripts = $('script').toArray();
   const data = [...images, ...scripts];
 
   const resourses = data
-    .filter((el) => el.attribs.src && el.attribs.src.startsWith('/'))
+    .filter((el) => {
+      const src = el.attribs.src;
+      if (!src) {
+        return false;
+      }
+
+      if (src.startsWith('/')) {
+        return true;
+      }
+      const { host } = new URL(src);
+
+      return src && host === mainHost;
+    })
     .map((el) => {
-      const src = el.attribs.src
+      const src = el.attribs.src;
       const { dir, name, ext } = path.parse(src);
-      const resoursePath = `${outputPath}/${currentPath}-${getCurrentPath(`${dir}/${name}`, ext)}`;
+      const resoursePath = `${outputPath}\\${currentPath}-${getCurrentPath(`${dir}\\${name}`, ext)}`;
       $(el).attr('src', src);
+      console.log(resoursePath, 'resoursePath')
 
       return {
         path: src,
@@ -33,17 +47,22 @@ const extractResourses = (html, outputPath, currentPath) => {
 };
 
 export default (url, output) => {
+  if (!url) {
+    throw new Error('err')
+  }
+
   const { dir, name } = path.parse(url);
-  const currentPath = getCurrentPath(`${dir}/${name}`);
+  const currentPath = getCurrentPath(`${dir}\\${name}`);
   console.log(dir, name, currentPath);
 
   return fetchPage(url)
-    .then((page) => fs.access(`${output}/${currentPath}`, constants.R_OK)
-      .then(() => fs.mkdir(`${output}/${currentPath}_files`).then(() => page))
-      .catch(() => fs.mkdir(`${output}/${currentPath}_files`, { recursive: true })
+    .then((page) => fs.access(`${output}\\${currentPath}`, constants.R_OK)
+      .then(() => fs.mkdir(`${output}\\${currentPath}_files`).then(() => page))
+      .catch(() => fs.mkdir(`${output}\\${currentPath}_files`, { recursive: true })
         .then(() => page)))
     .then((page) => {
-      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files/`, currentPath);
+      const { host } = new URL(url);
+      const { resourses, html } = extractResourses(page, `${output}\\${currentPath}_files`, currentPath, host);
       const resoursesDownload = resourses.map(({ path, name }) => ({
         title: name,
         task: () => axios({
@@ -63,7 +82,7 @@ export default (url, output) => {
       const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });
 
       return tasks.run()
-        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html));
+        .then(() => fs.writeFile(`${output}\\${currentPath}.html`, html));
       // exit(0);
     })
 };

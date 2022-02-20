@@ -58,37 +58,17 @@ test('500', async () => {
     .rejects.toThrowError('Request failed with status code 500');
 });
 
-// test.skip('page loading with resources', async () => {
-//   // const asdf = fetchResourses(expectFile);
-//   // expect(expectFile).toBe(asdf);
-// });
-
-// test('error 4xx fetch page', async () => {
-//   nock('https://ru.hexlet.io')
-//     .get('/coursesssss')
-//     .reply(404);
-
-//   await expect(loadPage('https://ru.hexlet.io/coursesssss', process.cwd()))
-//     .rejects;
-// });
-
-// test('error 5xx fetch page', async () => {
-//   nock('https://ru.hexlet.io')
-//     .get('/courses')
-//     .reply(500);
-
-//   await expect(loadPage('https://ru.hexlet.io/courses', process.cwd()))
-//     .rejects.toBe('');
-// });
 
 // test('not connect test', async () => {
 
 // });
 
-// test.skip('not url', async () => {
-//   await expect(loadPage('', process.cwd()))
-//     .rejects.toMatch('kajdsak');
-// });
+
+test('not url', async () => {
+  await expect(loadPage())
+    .rejects.toThrowError('Error');
+    // Выбросить ошибку в библио.функции 
+});
 
 // test.skip('test not access', () => {
 //   // c:Perflogs

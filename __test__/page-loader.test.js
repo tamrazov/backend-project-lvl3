@@ -65,5 +65,5 @@ test('test not access', async () => {
 
 
   await expect(loadPage('https://ru.hexlet.io/courses', '//wsl$/Ubuntu/home'))
-    .rejects.toThrowError('EPERM: operation not permitted, mkdir \'\\\\wsl$\\Ubuntu\\home\\ru-hexlet-io-courses_files\'');
+    .rejects.toThrow();
 });

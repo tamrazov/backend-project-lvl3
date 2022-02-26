@@ -58,18 +58,12 @@ test('500', async () => {
     .rejects.toThrowError('Request failed with status code 500');
 });
 
+test('test not access', async () => {
+  nock('https://ru.hexlet.io')
+    .get('/courses')
+    .reply(200, expectFile);
 
-// test('not connect test', async () => {
 
-// });
-
-
-// test('not url', async () => {
-//   await expect(loadPage())
-//     .rejects.toThrowError('Error');
-//     // Выбросить ошибку в библио.функции 
-// });
-
-// test.skip('test not access', () => {
-//   // c:Perflogs
-// });
+  await expect(loadPage('https://ru.hexlet.io/courses', '//wsl$/Ubuntu/home'))
+    .rejects.toThrowError('EPERM: operation not permitted, mkdir \'\\\\wsl$\\Ubuntu\\home\\ru-hexlet-io-courses_files\'');
+});

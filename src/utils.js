@@ -5,6 +5,7 @@ import debug from 'debug';
 debug('booting %o', 'page-loader');
 
 export const fetchPage = (path) => {
+  console.log(path, 'path path')
   debug(`fetch file from ${path}`);
   return axios.get(path)
     .then((response) => {

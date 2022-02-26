@@ -28,7 +28,7 @@ export const getCurrentPath = (string, ext = '') => {
   } else {
     curName = string;
   }
-  const curResult = curName.replace(/([.\/])/gi, '-');
+  const curResult = curName.replace(/([.\\\/])/gi, '-');
 
   return `${curResult}${ext}`;
 }

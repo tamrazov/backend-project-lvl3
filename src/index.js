@@ -27,6 +27,7 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
         return true;
       }
       const { host } = new URL(src);
+      console.log(src, host, mainHost, 'log log log')
 
       return src && host === mainHost;
     })
@@ -35,7 +36,6 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
       const { dir, name, ext } = path.parse(src);
       const resoursePath = `${outputPath}\\${currentPath}-${getCurrentPath(`${dir}\\${name}`, ext)}`;
       $(el).attr('src', src);
-      console.log(resoursePath, 'resoursePath')
 
       return {
         path: src,
@@ -48,12 +48,11 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
 
 export default (url, output) => {
   if (!url) {
-    throw new Error('err')
+    throw new Error('Error');
   }
 
   const { dir, name } = path.parse(url);
   const currentPath = getCurrentPath(`${dir}\\${name}`);
-  console.log(dir, name, currentPath);
 
   return fetchPage(url)
     .then((page) => fs.access(`${output}\\${currentPath}`, constants.R_OK)
@@ -76,7 +75,6 @@ export default (url, output) => {
           })
           .catch((err) => {
             debug(`fetch error ${err}`);
-            console.error(err);
           }),
       }));
       const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });

@@ -64,11 +64,11 @@ test('500', async () => {
 // });
 
 
-test('not url', async () => {
-  await expect(loadPage())
-    .rejects.toThrowError('Error');
-    // Выбросить ошибку в библио.функции 
-});
+// test('not url', async () => {
+//   await expect(loadPage())
+//     .rejects.toThrowError('Error');
+//     // Выбросить ошибку в библио.функции 
+// });
 
 // test.skip('test not access', () => {
 //   // c:Perflogs

@@ -27,7 +27,6 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
         return true;
       }
       const { host } = new URL(src);
-      console.log(src, host, mainHost, 'log log log')
 
       return src && host === mainHost;
     })

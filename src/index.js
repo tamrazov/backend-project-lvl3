@@ -33,7 +33,7 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
     .map((el) => {
       const src = el.attribs.src;
       const { dir, name, ext } = path.parse(src);
-      const resoursePath = `${outputPath}\\${currentPath}-${getCurrentPath(`${dir}\\${name}`, ext)}`;
+      const resoursePath = `${outputPath}/${currentPath}-${getCurrentPath(`${dir}/${name}`, ext)}`;
       $(el).attr('src', src);
 
       return {
@@ -51,16 +51,16 @@ export default (url, output) => {
   }
 
   const { dir, name } = path.parse(url);
-  const currentPath = getCurrentPath(`${dir}\\${name}`);
+  const currentPath = getCurrentPath(`${dir}/${name}`);
 
   return fetchPage(url)
-    .then((page) => fs.access(`${output}\\${currentPath}`, constants.R_OK)
-      .then(() => fs.mkdir(`${output}\\${currentPath}_files`).then(() => page))
-      .catch(() => fs.mkdir(`${output}\\${currentPath}_files`, { recursive: true })
+    .then((page) =>
+      fs.access(`${output}/${currentPath}_files`, constants.W_OK)
+        .catch(() => fs.mkdir(`${output}/${currentPath}_files`)
         .then(() => page)))
     .then((page) => {
       const { host } = new URL(url);
-      const { resourses, html } = extractResourses(page, `${output}\\${currentPath}_files`, currentPath, host);
+      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`, currentPath, host);
       const resoursesDownload = resourses.map(({ path, name }) => ({
         title: name,
         task: () => axios({
@@ -79,7 +79,7 @@ export default (url, output) => {
       const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });
 
       return tasks.run()
-        .then(() => fs.writeFile(`${output}\\${currentPath}.html`, html));
+        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html));
       // exit(0);
     })
 };

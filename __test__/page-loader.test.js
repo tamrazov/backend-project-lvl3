@@ -1,5 +1,6 @@
 import nock from 'nock';
 import fs from 'fs/promises';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -11,9 +12,10 @@ const __dirname = dirname(__filename);
 nock.disableNetConnect();
 let expectFile;
 let resourceFile;
-let outputPath = 'C:\\Users\\alexandr.tamrazov\\OneDrive - Accenture\\Desktop\\projects';
+let outputPath;
 
 beforeEach(async () => {
+  outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
   expectFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses.html', 'utf-8');
   resourceFile = await fs.readFile('./__fixtures__/ru-hexlet-io-assets-professions-nodejs.png', 'utf-8');
 });
@@ -63,7 +65,8 @@ test('test not access', async () => {
     .get('/courses')
     .reply(200, expectFile);
 
+  const rootDirPath = '/sys';
 
-  await expect(loadPage('https://ru.hexlet.io/courses', '//wsl$/Ubuntu/home'))
-    .rejects.toThrow();
+  await expect(loadPage('https://ru.hexlet.io/courses', rootDirPath))
+    .rejects.toThrow(/EACCES/);
 });

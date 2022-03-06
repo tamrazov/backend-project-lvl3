@@ -1,5 +1,4 @@
 import fs from 'fs/promises';
-import * as url from "url";
 import axios from 'axios';
 import cheerio from 'cheerio';
 import debug from 'debug';
@@ -18,7 +17,7 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
 
   const resourses = data
     .filter((el) => {
-      const src = el.attribs.src;
+      const { src } = el.attribs;
       if (!src) {
         return false;
       }
@@ -31,14 +30,14 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
       return src && host === mainHost;
     })
     .map((el) => {
-      const src = el.attribs.src;
+      const { src } = el.attribs;
       const { dir, name, ext } = path.parse(src);
       const resoursePath = `${outputPath}/${currentPath}-${getCurrentPath(`${dir}/${name}`, ext)}`;
       $(el).attr('src', src);
 
       return {
-        path: src,
-        name: resoursePath,
+        resPath: src,
+        resName: resoursePath,
       };
     });
 
@@ -54,23 +53,22 @@ export default (url, output) => {
   const currentPath = getCurrentPath(`${dir}/${name}`);
 
   return fetchPage(url)
-    .then((page) =>
-      fs.access(`${output}/${currentPath}_files`, constants.W_OK)
-        .catch(() => fs.mkdir(`${output}/${currentPath}_files`)
+    .then((page) => fs.access(`${output}/${currentPath}_files`, constants.W_OK)
+      .catch(() => fs.mkdir(`${output}/${currentPath}_files`)
         .then(() => page)))
     .then((page) => {
       const { host } = new URL(url);
       const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`, currentPath, host);
-      const resoursesDownload = resourses.map(({ path, name }) => ({
-        title: name,
+      const resoursesDownload = resourses.map(({ resPath, resName }) => ({
+        title: resName,
         task: () => axios({
           method: 'get',
-          url: `${dir}${path}`,
+          url: `${dir}${resPath}`,
           responseType: 'arraybuffer',
         })
-          .then(({data, status}) => {
+          .then(({ data, status }) => {
             debug(`success fetch resource ${status}`);
-            return fs.writeFile(name, data);
+            return fs.writeFile(resName, data);
           })
           .catch((err) => {
             debug(`fetch error ${err}`);
@@ -81,5 +79,5 @@ export default (url, output) => {
       return tasks.run()
         .then(() => fs.writeFile(`${output}/${currentPath}.html`, html));
       // exit(0);
-    })
+    });
 };

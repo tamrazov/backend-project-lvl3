@@ -1,13 +1,8 @@
 import nock from 'nock';
 import fs from 'fs/promises';
 import os from 'os';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { path } from 'path';
 import loadPage from '../src/index.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 nock.disableNetConnect();
 let expectFile;
@@ -31,11 +26,11 @@ test('async page loading', async () => {
   await loadPage('https://ru.hexlet.io/courses', outputPath);
   const file = await fs.readFile(path.join(
     outputPath,
-    'ru-hexlet-io-courses.html'
+    'ru-hexlet-io-courses.html',
   ), 'utf-8');
   const resource = await fs.readFile(path.join(
     outputPath,
-    'ru-hexlet-io-courses_files/ru-hexlet-io-courses-assets-professions-nodejs.png'
+    'ru-hexlet-io-courses_files/ru-hexlet-io-courses-assets-professions-nodejs.png',
   ), 'utf-8');
 
   expect(file).toBe(expectFile);
@@ -60,7 +55,7 @@ test('500', async () => {
     .rejects.toThrowError('Request failed with status code 500');
 });
 
-test('test not access', async () => {
+test('not access', async () => {
   nock('https://ru.hexlet.io')
     .get('/courses')
     .reply(200, expectFile);

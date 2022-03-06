@@ -5,7 +5,7 @@ import debug from 'debug';
 debug('booting %o', 'page-loader');
 
 export const fetchPage = (path) => {
-  console.log(path, 'path path')
+  console.log(path, 'path path');
   debug(`fetch file from ${path}`);
   return axios.get(path)
     .then((response) => {
@@ -18,9 +18,10 @@ export const fetchPage = (path) => {
     });
 };
 
-export const getCurrentPath = (string, ext = '') => {
+export const getCurrentPath = (str, ext = '') => {
+  let string = str;
   if (string.charAt(0) === '/') {
-    string = string.slice(1)
+    string = string.slice(1);
   }
 
   let curName;
@@ -32,7 +33,7 @@ export const getCurrentPath = (string, ext = '') => {
   const curResult = curName.replace(/([.\\\/])/gi, '-');
 
   return `${curResult}${ext}`;
-}
+};
 
 // export const fetchResourse = (path, name) => {
 //   debug(`fetch resource from ${path}`);

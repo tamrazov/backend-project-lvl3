@@ -1,7 +1,7 @@
 import nock from 'nock';
 import fs from 'fs/promises';
 import os from 'os';
-import { path } from 'path';
+import path from 'path';
 import loadPage from '../src/index.js';
 
 nock.disableNetConnect();

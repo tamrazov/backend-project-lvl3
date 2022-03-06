@@ -5,7 +5,11 @@ import debug from 'debug';
 import Listr from 'listr';
 import { constants } from 'fs';
 import path from 'path';
-import { fetchPage, getCurrentPath } from './utils.js';
+import { tagTypes } from './constants';
+import {
+  fetchPage, getCurrentPath, getCurrentResoursePath,
+  getHost, getDownloadPath,
+} from './utils.js';
 
 debug('booting %o', 'page-loader');
 
@@ -13,30 +17,32 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
   const $ = cheerio.load(html);
   const images = $('img').toArray();
   const scripts = $('script').toArray();
-  const data = [...images, ...scripts];
+  const links = $('link').toArray();
+  const data = [...images, ...scripts, ...links].filter((el) => {
+    const result = el.attribs[tagTypes[el.name]];
+    if (result.startsWith('/')) {
+      return true;
+    }
+
+    const host = getHost(result);
+
+    if (host !== mainHost) {
+      return false;
+    }
+
+    return true;
+  });
 
   const resourses = data
-    .filter((el) => {
-      const { src } = el.attribs;
-      if (!src) {
-        return false;
-      }
-
-      if (src.startsWith('/')) {
-        return true;
-      }
-      const { host } = new URL(src);
-
-      return src && host === mainHost;
-    })
+    .filter((el) => el.attribs[tagTypes[el.name]])
     .map((el) => {
-      const { src } = el.attribs;
-      const { dir, name, ext } = path.parse(src);
-      const resoursePath = `${outputPath}/${currentPath}-${getCurrentPath(`${dir}/${name}`, ext)}`;
-      $(el).attr('src', src);
+      const src = el.attribs[tagTypes[el.name]];
+      const curResoursePath = getCurrentResoursePath(el.attribs[tagTypes[el.name]], mainHost);
+      const resoursePath = `${outputPath}/${curResoursePath}`;
+      $(el).attr('src', curResoursePath);
 
       return {
-        resPath: src,
+        resPath: getDownloadPath(src, mainHost),
         resName: resoursePath,
       };
     });

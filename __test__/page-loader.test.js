@@ -6,12 +6,14 @@ import loadPage from '../src/index.js';
 
 nock.disableNetConnect();
 let expectFile;
+let tt;
 let resourceFile;
 let outputPath;
 
 beforeEach(async () => {
   outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
   expectFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses.html', 'utf-8');
+  tt = await fs.readFile('./__fixtures__/ru-hexlet-io-courses-expected.html', 'utf-8');
   resourceFile = await fs.readFile('./__fixtures__/ru-hexlet-io-assets-professions-nodejs.png', 'utf-8');
 });
 
@@ -33,7 +35,7 @@ test('async page loading', async () => {
     'ru-hexlet-io-courses_files/ru-hexlet-io-courses-assets-professions-nodejs.png',
   ), 'utf-8');
 
-  expect(file).toBe(expectFile);
+  expect(file).toBe(tt);
   expect(resource).toBe(resourceFile);
 });
 

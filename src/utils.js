@@ -1,13 +1,19 @@
 import axios from 'axios';
 import 'axios-debug-log';
 import debug from 'debug';
+import path from 'path';
 
 debug('booting %o', 'page-loader');
 
-export const fetchPage = (path) => {
-  console.log(path, 'path path');
-  debug(`fetch file from ${path}`);
-  return axios.get(path)
+export const getHost = (url) => {
+  const { host } = new URL(url);
+
+  return host;
+};
+
+export const fetchPage = (pathPage) => {
+  debug(`fetch file from ${pathPage}`);
+  return axios.get(pathPage)
     .then((response) => {
       debug(`success fetch file ${response.status}`);
       return response.data;
@@ -35,21 +41,24 @@ export const getCurrentPath = (str, ext = '') => {
   return `${curResult}${ext}`;
 };
 
-// export const fetchResourse = (path, name) => {
-//   debug(`fetch resource from ${path}`);
+export const getCurrentResoursePath = (str, mainHost) => {
+  let result = str;
 
-//   return axios({
-//     method: 'get',
-//     url: path,
-//     responseType: 'stream',
-//   })
-//     .then((response) => {
-//       // debug(`success fetch resource ${response.status}`);
-//       // return response.data.pipe(fs.createWriteStream(name))
-//     })
-//     .catch(() => {
-//       // debug(`fetch error ${err}`);
-//       // console.error(err);
-//       // exit(1);
-//     });
-// };
+  if (result.startsWith('/')) {
+    result = `https://${mainHost}${result}`;
+  }
+
+  const { dir, name, ext } = path.parse(result);
+
+  return getCurrentPath(`${dir}/${name}`, ext ?? '.html');
+};
+
+export const getDownloadPath = (str, mainHost) => {
+  let result = str;
+
+  if (result.startsWith('/')) {
+    result = `https://${mainHost}${result}`;
+  }
+
+  return result;
+};

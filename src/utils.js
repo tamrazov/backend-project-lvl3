@@ -50,7 +50,7 @@ export const getCurrentResoursePath = (str, mainHost) => {
 
   const { dir, name, ext } = path.parse(result);
 
-  return getCurrentPath(`${dir}/${name}`, ext ?? '.html');
+  return getCurrentPath(`${dir}/${name}`, ext || '.html');
 };
 
 export const getDownloadPath = (str, mainHost) => {

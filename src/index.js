@@ -69,7 +69,7 @@ export default (url, output) => {
         title: resName,
         task: () => axios({
           method: 'get',
-          url: `${dir}${resPath}`,
+          url: `${resPath}`,
           responseType: 'arraybuffer',
         })
           .then(({ data, status }) => {

@@ -6,21 +6,21 @@ import loadPage from '../src/index.js';
 
 nock.disableNetConnect();
 let expectFile;
-let tt;
+let resivedFile;
 let resourceFile;
 let outputPath;
 
 beforeEach(async () => {
   outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
-  expectFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses.html', 'utf-8');
-  tt = await fs.readFile('./__fixtures__/ru-hexlet-io-courses-expected.html', 'utf-8');
+  resivedFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses.html', 'utf-8');
+  expectFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses-expected.html', 'utf-8');
   resourceFile = await fs.readFile('./__fixtures__/ru-hexlet-io-assets-professions-nodejs.png', 'utf-8');
 });
 
 test('async page loading', async () => {
   nock('https://ru.hexlet.io')
     .get('/courses')
-    .reply(200, expectFile);
+    .reply(200, resivedFile);
   nock('https://ru.hexlet.io')
     .get('/assets/professions/nodejs.png')
     .reply(200, resourceFile);
@@ -30,13 +30,13 @@ test('async page loading', async () => {
     outputPath,
     'ru-hexlet-io-courses.html',
   ), 'utf-8');
-  // const resource = await fs.readFile(path.join(
-  //   outputPath,
-  //   'ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png',
-  // ), 'utf-8');
+  const resource = await fs.readFile(path.join(
+    outputPath,
+    'ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png',
+  ), 'utf-8');
 
-  expect(file).toBe(tt);
-  // expect(resource).toBe(resourceFile);
+  expect(file).toBe(expectFile);
+  expect(resource).toBe(resourceFile);
 });
 
 test('404', async () => {

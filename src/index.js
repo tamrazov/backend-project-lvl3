@@ -5,11 +5,16 @@ import debug from 'debug';
 import Listr from 'listr';
 import { constants } from 'fs';
 import path from 'path';
-import { tagTypes } from './constants';
 import {
   fetchPage, getCurrentPath, getCurrentResoursePath,
   getHost, getDownloadPath,
 } from './utils.js';
+
+const tagTypes = {
+  img: 'src',
+  script: 'src',
+  link: 'href',
+};
 
 debug('booting %o', 'page-loader');
 

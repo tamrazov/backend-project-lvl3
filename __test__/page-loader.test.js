@@ -39,20 +39,6 @@ test('async page loading', async () => {
   expect(resource).toBe(resourceFile);
 });
 
-test('default output', async () => {
-  nock('https://ru.hexlet.io')
-    .get('/courses')
-    .reply(200, resivedFile);
-
-  await loadPage('https://ru.hexlet.io/courses');
-  const file = await fs.readFile(path.join(
-    process.cwd(),
-    'ru-hexlet-io-courses.html',
-  ), 'utf-8');
-
-  expect(file).toBe(expectFile);
-});
-
 test('404', async () => {
   nock('https://ru.hexlet.io')
     .get('/courses')

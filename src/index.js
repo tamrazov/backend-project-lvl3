@@ -50,7 +50,7 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
   return { resourses, html: $.html() };
 };
 
-export default (url, output) => {
+export default (url, output = process.cwd()) => {
   if (!url) {
     throw new Error('Error');
   }

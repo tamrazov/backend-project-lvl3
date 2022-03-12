@@ -88,7 +88,8 @@ export default (url, output = process.cwd()) => {
       const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });
 
       return tasks.run()
-        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html));
+        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
+        .then(() => `${output}/${currentPath}.html`);
       // exit(0);
     });
 };

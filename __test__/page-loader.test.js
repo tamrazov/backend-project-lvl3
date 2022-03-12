@@ -5,6 +5,7 @@ import path from 'path';
 import loadPage from '../src/index.js';
 
 nock.disableNetConnect();
+nock.disableNetConnect('127.0.0.1');
 let expectFile;
 let resivedFile;
 let resourceFile;

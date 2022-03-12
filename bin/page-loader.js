@@ -9,7 +9,12 @@ program
   .arguments('<url>')
   .action((url) => {
     const { output } = program.opts();
-    main(url, output);
+    main(url, output)
+      .then((path) => console.log(path))
+      .catch((err) => {
+        console.error(err.message);
+        process.exit(1);
+      });
   });
 
 program.parse(process.argv);

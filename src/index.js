@@ -83,6 +83,7 @@ export default (url, output = process.cwd()) => {
           })
           .catch((err) => {
             debug(`fetch error ${err}`);
+            throw err;
           }),
       }));
       const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });

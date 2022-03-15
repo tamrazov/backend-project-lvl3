@@ -11,6 +11,12 @@ export const getHost = (url) => {
   return host;
 };
 
+export const getProtocol = (url) => {
+  const { protocol } = new URL(url);
+
+  return protocol;
+};
+
 export const fetchPage = (pathPage) => {
   debug(`fetch file from ${pathPage}`);
   return axios.get(pathPage)

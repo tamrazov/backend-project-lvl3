@@ -7,7 +7,7 @@ import { constants } from 'fs';
 import path from 'path';
 import {
   fetchPage, getCurrentPath, getCurrentResoursePath,
-  getHost, getDownloadPath,
+  getHost, getDownloadPath, getProtocol,
 } from './utils.js';
 
 const tagTypes = {
@@ -18,7 +18,7 @@ const tagTypes = {
 
 debug('booting %o', 'page-loader');
 
-const extractResourses = (html, outputPath, currentPath, mainHost) => {
+const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol) => {
   const $ = cheerio.load(html);
   const images = $('img').toArray();
   const scripts = $('script').toArray();
@@ -30,8 +30,9 @@ const extractResourses = (html, outputPath, currentPath, mainHost) => {
     }
 
     const host = getHost(result);
+    const protocol = getProtocol(result);
 
-    if (host !== mainHost) {
+    if (host !== mainHost || protocol !== mainProtocol) {
       return false;
     }
 
@@ -68,8 +69,8 @@ export default (url, output = process.cwd()) => {
       .catch(() => fs.mkdir(`${output}/${currentPath}_files`)
         .then(() => page)))
     .then((page) => {
-      const { host } = new URL(url);
-      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`, currentPath, host);
+      const { host, protocol } = new URL(url);
+      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`, currentPath, host, protocol);
       const resoursesDownload = resourses.map(({ resPath, resName }) => ({
         title: resName,
         task: () => axios({

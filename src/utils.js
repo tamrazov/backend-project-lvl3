@@ -59,11 +59,11 @@ export const getCurrentResoursePath = (str, mainHost) => {
   return getCurrentPath(`${dir}/${name}`, ext || '.html');
 };
 
-export const getDownloadPath = (str, mainHost) => {
+export const getDownloadPath = (str, mainHost, mainProtocol) => {
   let result = str;
 
   if (result.startsWith('/')) {
-    result = `https://${mainHost}${result}`;
+    result = `${mainProtocol}//${mainHost}${result}`;
   }
 
   return result;

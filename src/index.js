@@ -30,9 +30,8 @@ const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol)
     }
 
     const host = getHost(result);
-    const protocol = getProtocol(result);
 
-    if (host !== mainHost || protocol !== mainProtocol) {
+    if (host !== mainHost) {
       return false;
     }
 
@@ -48,7 +47,7 @@ const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol)
       $(el).attr(tagTypes[el.name], `${currentPath}_files/${curResoursePath}`);
 
       return {
-        resPath: getDownloadPath(src, mainHost),
+        resPath: getDownloadPath(src, mainHost, mainProtocol),
         resName: resoursePath,
       };
     });

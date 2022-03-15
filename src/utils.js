@@ -64,6 +64,9 @@ export const getDownloadPath = (str, mainHost, mainProtocol) => {
 
   if (result.startsWith('/')) {
     result = `${mainProtocol}//${mainHost}${result}`;
+  } else {
+    const { pathname } = new URL(str);
+    result = `${mainProtocol}//${mainHost}${pathname}`;
   }
 
   return result;

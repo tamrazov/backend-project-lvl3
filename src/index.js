@@ -7,7 +7,7 @@ import { constants } from 'fs';
 import path from 'path';
 import {
   fetchPage, getCurrentPath, getCurrentResoursePath,
-  getHost, getDownloadPath, getProtocol,
+  getHost, getDownloadPath,
 } from './utils.js';
 
 const tagTypes = {
@@ -46,6 +46,7 @@ const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol)
       const resoursePath = `${outputPath}/${curResoursePath}`;
       $(el).attr(tagTypes[el.name], `${currentPath}_files/${curResoursePath}`);
 
+      console.log(getDownloadPath(src, mainHost, mainProtocol));
       return {
         resPath: getDownloadPath(src, mainHost, mainProtocol),
         resName: resoursePath,
@@ -74,7 +75,7 @@ export default (url, output = process.cwd()) => {
         title: resName,
         task: () => axios({
           method: 'get',
-          url: `${resPath}`,
+          url: resPath,
           responseType: 'arraybuffer',
         })
           .then(({ data, status }) => {

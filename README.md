@@ -34,7 +34,7 @@ What I learned from this project:
 ## Getting started
 - Clone the repository
 ```cmd
-git clone git@github.com:gedo19/backend-project-lvl3.git
+git clone git@github.com:aleksandrtamrazov/backend-project-lvl3.git
 ```
 - Install dependencies
 ```cmd

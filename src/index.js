@@ -46,7 +46,6 @@ const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol)
       const resoursePath = `${outputPath}/${curResoursePath}`;
       $(el).attr(tagTypes[el.name], `${currentPath}_files/${curResoursePath}`);
 
-      console.log(getDownloadPath(src, mainHost, mainProtocol));
       return {
         resPath: getDownloadPath(src, mainHost, mainProtocol),
         resName: resoursePath,

@@ -8,7 +8,10 @@ lint:
 	npx eslint .
 
 test:
-	npm test
+	DEBUG=axios npm test
+
+test-debug:
+	DEBUG=nock.*,axios npm test
 
 test-coverage:
 	npm test -- --coverage --coverageProvider=v8

@@ -57,17 +57,3 @@ Options:
   -o, --output [dir]  output dir (default: "/home/user/current-dir")
   -h, --help          display help for command
 ```
-
-## Preview
-
-### Installing
-[![asciicast](https://asciinema.org/a/468511.svg)](https://asciinema.org/a/468511)
-
-### Downloading page
-[![asciicast](https://asciinema.org/a/468513.svg)](https://asciinema.org/a/468513)
-
-### Errors
-[![asciicast](https://asciinema.org/a/468516.svg)](https://asciinema.org/a/468516)
-
-### Debug
-[![asciicast](https://asciinema.org/a/468528.svg)](https://asciinema.org/a/468528)

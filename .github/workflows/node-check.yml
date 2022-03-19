@@ -1,4 +1,4 @@
-name: linter-check
+name: node-check
 
 on:
   push:
@@ -30,6 +30,3 @@ jobs:
         with:
           coverageCommand: make test-coverage
           debug: true
-
-      - name: run tests
-        run: make test

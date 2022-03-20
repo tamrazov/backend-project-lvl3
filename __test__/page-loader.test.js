@@ -14,17 +14,17 @@ let resourceFileCss;
 let resourceFileHTML;
 let outputPath;
 
+const fetchFixtureFile = async (src) => fs.readFile(`./__fixtures__/${src}`, 'utf-8');
+
 beforeEach(async () => {
   outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
-  resivedFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses.html', 'utf-8');
-  expectFile = await fs.readFile('./__fixtures__/ru-hexlet-io-courses-expected.html', 'utf-8');
-  resourceFilePng = await fs.readFile('./__fixtures__/ru-hexlet-io-assets-professions-nodejs.png', 'utf-8');
-  resourceFileJS = await fs.readFile('./__fixtures__/runtime.js', 'utf-8');
-  resourceFileCss = await fs.readFile('./__fixtures__/application.css', 'utf-8');
-  resourceFileHTML = await fs.readFile('./__fixtures__/cources.html', 'utf-8');
-});
+  resivedFile = await fetchFixtureFile('ru-hexlet-io-courses.html');
+  expectFile = await fetchFixtureFile('ru-hexlet-io-courses-expected.html');
+  resourceFilePng = await fetchFixtureFile('ru-hexlet-io-assets-professions-nodejs.png');
+  resourceFileJS = await fetchFixtureFile('ru-hexlet-io-packs-js-runtime.js');
+  resourceFileCss = await fetchFixtureFile('ru-hexlet-io-assets-application.css');
+  resourceFileHTML = await fetchFixtureFile('ru-hexlet-io-courses_file.html');
 
-test('async page loading', async () => {
   nock('https://ru.hexlet.io')
     .get('/courses')
     .reply(200, resivedFile);
@@ -41,69 +41,73 @@ test('async page loading', async () => {
     .get('/courses')
     .reply(200, resourceFileCss);
 
-  await loadPage('https://ru.hexlet.io/courses', outputPath);
-  const file = await fs.readFile(path.join(
-    outputPath,
-    'ru-hexlet-io-courses.html',
-  ), 'utf-8');
-  const resourcePng = await fs.readFile(path.join(
-    outputPath,
-    'ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png',
-  ), 'utf-8');
-  const resourceJs = await fs.readFile(path.join(
-    outputPath,
-    'ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js',
-  ), 'utf-8');
-  const resourceCss = await fs.readFile(path.join(
-    outputPath,
-    'ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css',
-  ), 'utf-8');
-  const resourceHTML = await fs.readFile(path.join(
-    outputPath,
-    'ru-hexlet-io-courses_files/ru-hexlet-io-courses.html',
-  ), 'utf-8');
-
-  expect(file).toBe(expectFile);
-  expect(resourcePng).toBe(resourceFilePng);
-  expect(resourceJs).toBe(resourceFileJS);
-  expect(resourceCss).toBe(resourceFileCss);
-  expect(resourceHTML).toBe(resourceFileHTML);
-});
-
-test('404', async () => {
   nock('https://ru.hexlet.io')
-    .get('/courses')
+    .get('/courses/404')
     .reply(404);
-
-  await expect(loadPage('https://ru.hexlet.io/courses', outputPath))
-    .rejects.toThrowError('Request failed with status code 404');
-});
-
-test('500', async () => {
   nock('https://ru.hexlet.io')
-    .get('/courses')
+    .get('/courses/500')
     .reply(500);
 
-  await expect(loadPage('https://ru.hexlet.io/courses', outputPath))
-    .rejects.toThrowError('Request failed with status code 500');
-});
-
-test('not access', async () => {
   nock('https://ru.hexlet.io')
-    .get('/courses')
+    .get('/courses/access')
     .reply(200, expectFile);
-
-  const rootDirPath = '/sys';
-
-  await expect(loadPage('https://ru.hexlet.io/courses', rootDirPath))
-    .rejects.toThrow(/EACCES/);
+  nock('https://ru.hexlet.io')
+    .get('/courses/network')
+    .replyWithError('Network Error');
 });
 
-test('no connection', async () => {
-  nock('https://ru.hexlet.io')
-    .get('/courses')
-    .replyWithError('Network Error');
+describe('page loading test', () => {
+  test('async page loading', async () => {
+    await loadPage('https://ru.hexlet.io/courses', outputPath);
+    const file = await fs.readFile(path.join(
+      outputPath,
+      'ru-hexlet-io-courses.html',
+    ), 'utf-8');
+    const resourcePng = await fs.readFile(path.join(
+      outputPath,
+      'ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png',
+    ), 'utf-8');
+    const resourceJs = await fs.readFile(path.join(
+      outputPath,
+      'ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js',
+    ), 'utf-8');
+    const resourceCss = await fs.readFile(path.join(
+      outputPath,
+      'ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css',
+    ), 'utf-8');
+    const resourceHTML = await fs.readFile(path.join(
+      outputPath,
+      'ru-hexlet-io-courses_files/ru-hexlet-io-courses.html',
+    ), 'utf-8');
 
-  await expect(loadPage('https://ru.hexlet.io/courses', outputPath))
-    .rejects.toThrowError('Network Error');
+    expect(file).toBe(expectFile);
+    expect(resourcePng).toBe(resourceFilePng);
+    expect(resourceJs).toBe(resourceFileJS);
+    expect(resourceCss).toBe(resourceFileCss);
+    expect(resourceHTML).toBe(resourceFileHTML);
+  });
+});
+
+describe('statuses tests', () => {
+  test.each([
+    ['https://ru.hexlet.io/courses/404', 404],
+    ['https://ru.hexlet.io/courses/500', 500],
+  ])('test (%s)', async (src, expected) => {
+    await expect(loadPage(src, outputPath))
+      .rejects.toThrowError(`Request failed with status code ${expected}`);
+  });
+});
+
+describe('not access and network error', () => {
+  test('not access', async () => {
+    const rootDirPath = '/sys';
+
+    await expect(loadPage('https://ru.hexlet.io/courses/access', rootDirPath))
+      .rejects.toThrow(/EACCES/);
+  });
+
+  test('network error', async () => {
+    await expect(loadPage('https://ru.hexlet.io/courses/network', outputPath))
+      .rejects.toThrowError('Network Error');
+  });
 });

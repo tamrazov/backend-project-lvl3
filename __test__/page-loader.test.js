@@ -14,16 +14,16 @@ let resourceFileCss;
 let resourceFileHTML;
 let outputPath;
 
-const fetchFixtureFile = async (src) => fs.readFile(`./__fixtures__/${src}`, 'utf-8');
+const readFixtureFile = async (src) => fs.readFile(`./__fixtures__/${src}`, 'utf-8');
 
 beforeEach(async () => {
   outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
-  resivedFile = await fetchFixtureFile('ru-hexlet-io-courses.html');
-  expectFile = await fetchFixtureFile('ru-hexlet-io-courses-expected.html');
-  resourceFilePng = await fetchFixtureFile('ru-hexlet-io-assets-professions-nodejs.png');
-  resourceFileJS = await fetchFixtureFile('ru-hexlet-io-packs-js-runtime.js');
-  resourceFileCss = await fetchFixtureFile('ru-hexlet-io-assets-application.css');
-  resourceFileHTML = await fetchFixtureFile('ru-hexlet-io-courses_file.html');
+  resivedFile = await readFixtureFile('ru-hexlet-io-courses.html');
+  expectFile = await readFixtureFile('ru-hexlet-io-courses-expected.html');
+  resourceFilePng = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png');
+  resourceFileJS = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js');
+  resourceFileCss = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css');
+  resourceFileHTML = await readFixtureFile('ru-hexlet-io-courses_file.html');
 
   nock('https://ru.hexlet.io')
     .get('/courses')

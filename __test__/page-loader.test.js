@@ -17,33 +17,33 @@ const rootPath = 'https://ru.hexlet.io';
 
 const readFixtureFile = async (src) => fs.readFile(`./__fixtures__/${src}`, 'utf-8');
 
-beforeEach(async () => {
-  outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
-  resivedFile = await readFixtureFile('ru-hexlet-io-courses.html');
-  expectFile = await readFixtureFile('ru-hexlet-io-courses-expected.html');
-  resourceFilePng = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png');
-  resourceFileJS = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js');
-  resourceFileCss = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css');
-  resourceFileHTML = await readFixtureFile('ru-hexlet-io-courses_file.html');
-
-  nock(rootPath)
-    .get('/courses')
-    .reply(200, resivedFile);
-  nock(rootPath)
-    .get('/assets/professions/nodejs.png')
-    .reply(200, resourceFilePng);
-  nock(rootPath)
-    .get('/packs/js/runtime.js')
-    .reply(200, resourceFileJS);
-  nock(rootPath)
-    .get('/assets/application.css')
-    .reply(200, resourceFileCss);
-  nock(rootPath)
-    .get('/courses')
-    .reply(200, resourceFileCss);
-});
-
 describe('page loading test', () => {
+  beforeEach(async () => {
+    outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
+    resivedFile = await readFixtureFile('ru-hexlet-io-courses.html');
+    expectFile = await readFixtureFile('ru-hexlet-io-courses-expected.html');
+    resourceFilePng = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png');
+    resourceFileJS = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js');
+    resourceFileCss = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css');
+    resourceFileHTML = await readFixtureFile('ru-hexlet-io-courses_file.html');
+  
+    nock(rootPath)
+      .get('/courses')
+      .reply(200, resivedFile);
+    nock(rootPath)
+      .get('/assets/professions/nodejs.png')
+      .reply(200, resourceFilePng);
+    nock(rootPath)
+      .get('/packs/js/runtime.js')
+      .reply(200, resourceFileJS);
+    nock(rootPath)
+      .get('/assets/application.css')
+      .reply(200, resourceFileCss);
+    nock(rootPath)
+      .get('/courses')
+      .reply(200, resourceFileCss);
+  });
+
   test('async page loading', async () => {
     await loadPage('https://ru.hexlet.io/courses', outputPath);
     const file = await fs.readFile(path.join(

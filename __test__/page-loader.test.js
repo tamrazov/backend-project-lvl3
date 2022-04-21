@@ -13,6 +13,7 @@ let resourceFileJS;
 let resourceFileCss;
 let resourceFileHTML;
 let outputPath;
+const rootPath = 'https://ru.hexlet.io';
 
 const readFixtureFile = async (src) => fs.readFile(`./__fixtures__/${src}`, 'utf-8');
 
@@ -25,35 +26,21 @@ beforeEach(async () => {
   resourceFileCss = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css');
   resourceFileHTML = await readFixtureFile('ru-hexlet-io-courses_file.html');
 
-  nock('https://ru.hexlet.io')
+  nock(rootPath)
     .get('/courses')
     .reply(200, resivedFile);
-  nock('https://ru.hexlet.io')
+  nock(rootPath)
     .get('/assets/professions/nodejs.png')
     .reply(200, resourceFilePng);
-  nock('https://ru.hexlet.io')
+  nock(rootPath)
     .get('/packs/js/runtime.js')
     .reply(200, resourceFileJS);
-  nock('https://ru.hexlet.io')
+  nock(rootPath)
     .get('/assets/application.css')
     .reply(200, resourceFileCss);
-  nock('https://ru.hexlet.io')
+  nock(rootPath)
     .get('/courses')
     .reply(200, resourceFileCss);
-
-  nock('https://ru.hexlet.io')
-    .get('/courses/404')
-    .reply(404);
-  nock('https://ru.hexlet.io')
-    .get('/courses/500')
-    .reply(500);
-
-  nock('https://ru.hexlet.io')
-    .get('/courses/access')
-    .reply(200, expectFile);
-  nock('https://ru.hexlet.io')
-    .get('/courses/network')
-    .replyWithError('Network Error');
 });
 
 describe('page loading test', () => {
@@ -89,16 +76,31 @@ describe('page loading test', () => {
 });
 
 describe('statuses tests', () => {
-  test.each([
-    ['https://ru.hexlet.io/courses/404', 404],
-    ['https://ru.hexlet.io/courses/500', 500],
-  ])('test (%s)', async (src, expected) => {
-    await expect(loadPage(src, outputPath))
-      .rejects.toThrowError(`Request failed with status code ${expected}`);
+  beforeEach(() => {
+    nock(rootPath)
+      .get('/courses/404')
+      .reply(404);
+    nock(rootPath)
+      .get('/courses/500')
+      .reply(500);
+  });
+
+  test.each([404, 500])('test (%s)', async (status) => {
+    await expect(loadPage(`https://ru.hexlet.io/courses/${status}`, outputPath))
+      .rejects.toThrowError(`Request failed with status code ${status}`);
   });
 });
 
 describe('not access and network error', () => {
+  beforeEach(() => {
+    nock(rootPath)
+      .get('/courses/access')
+      .reply(200, expectFile);
+    nock(rootPath)
+      .get('/courses/network')
+      .replyWithError('Network Error');
+  });
+
   test('not access', async () => {
     const rootDirPath = '/sys';
 

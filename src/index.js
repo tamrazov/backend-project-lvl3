@@ -1,59 +1,12 @@
 import fs from 'fs/promises';
 import axios from 'axios';
-import cheerio from 'cheerio';
 import debug from 'debug';
 import Listr from 'listr';
 import { constants } from 'fs';
 import path from 'path';
-import {
-  fetchPage, getCurrentPath, getCurrentResoursePath,
-  getHost, getDownloadPath,
-} from './utils.js';
-
-const tagTypes = {
-  img: 'src',
-  script: 'src',
-  link: 'href',
-};
+import { fetchPage, getCurrentPath, extractResourses } from './utils.js';
 
 debug('booting %o', 'page-loader');
-
-const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol) => {
-  const $ = cheerio.load(html);
-  const images = $('img').toArray();
-  const scripts = $('script').toArray();
-  const links = $('link').toArray();
-  const data = [...images, ...scripts, ...links].filter((el) => {
-    const result = el.attribs[tagTypes[el.name]];
-    if (result.startsWith('/')) {
-      return true;
-    }
-
-    const host = getHost(result);
-
-    if (host !== mainHost) {
-      return false;
-    }
-
-    return true;
-  });
-
-  const resourses = data
-    .filter((el) => el.attribs[tagTypes[el.name]])
-    .map((el) => {
-      const src = el.attribs[tagTypes[el.name]];
-      const curResoursePath = getCurrentResoursePath(el.attribs[tagTypes[el.name]], mainHost);
-      const resoursePath = `${outputPath}/${curResoursePath}`;
-      $(el).attr(tagTypes[el.name], `${currentPath}_files/${curResoursePath}`);
-
-      return {
-        resPath: getDownloadPath(src, mainHost, mainProtocol),
-        resName: resoursePath,
-      };
-    });
-
-  return { resourses, html: $.html() };
-};
 
 export default (url, output = process.cwd()) => {
   if (!url) {
@@ -91,6 +44,5 @@ export default (url, output = process.cwd()) => {
       return tasks.run()
         .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
         .then(() => `${output}/${currentPath}.html`);
-      // exit(0);
     });
 };

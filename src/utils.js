@@ -2,8 +2,15 @@ import axios from 'axios';
 import 'axios-debug-log';
 import debug from 'debug';
 import path from 'path';
+import cheerio from 'cheerio';
 
 debug('booting %o', 'page-loader');
+
+const attrsTypesFromTag = {
+  img: 'src',
+  script: 'src',
+  link: 'href',
+};
 
 export const getHost = (url) => {
   const { host } = new URL(url);
@@ -70,4 +77,44 @@ export const getDownloadPath = (str, mainHost, mainProtocol) => {
   }
 
   return result;
+};
+
+export const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol) => {
+  const $ = cheerio.load(html);
+  const images = $('img').toArray();
+  const scripts = $('script').toArray();
+  const links = $('link').toArray();
+  const data = [...images, ...scripts, ...links].filter((el) => {
+    const result = el.attribs[attrsTypesFromTag[el.name]];
+    if (result.startsWith('/')) {
+      return true;
+    }
+
+    const host = getHost(result);
+
+    if (host !== mainHost) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const resourses = data
+    .filter((el) => el.attribs[attrsTypesFromTag[el.name]])
+    .map((el) => {
+      const src = el.attribs[attrsTypesFromTag[el.name]];
+      const curResoursePath = getCurrentResoursePath(
+        el.attribs[attrsTypesFromTag[el.name]],
+        mainHost,
+      );
+      const resoursePath = `${outputPath}/${curResoursePath}`;
+      $(el).attr(attrsTypesFromTag[el.name], `${currentPath}_files/${curResoursePath}`);
+
+      return {
+        resPath: getDownloadPath(src, mainHost, mainProtocol),
+        resName: resoursePath,
+      };
+    });
+
+  return { resourses, html: $.html() };
 };

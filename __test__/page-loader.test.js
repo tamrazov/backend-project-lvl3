@@ -17,7 +17,7 @@ const rootPath = 'https://ru.hexlet.io';
 
 const readFixtureFile = async (src) => fs.readFile(`./__fixtures__/${src}`, 'utf-8');
 
-describe('page loading test', () => {
+describe('success page loading', () => {
   beforeEach(async () => {
     outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
     resivedFile = await readFixtureFile('ru-hexlet-io-courses.html');
@@ -26,7 +26,7 @@ describe('page loading test', () => {
     resourceFileJS = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js');
     resourceFileCss = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css');
     resourceFileHTML = await readFixtureFile('ru-hexlet-io-courses_file.html');
-  
+
     nock(rootPath)
       .get('/courses')
       .reply(200, resivedFile);
@@ -75,7 +75,7 @@ describe('page loading test', () => {
   });
 });
 
-describe('statuses tests', () => {
+describe('errors cases tests', () => {
   beforeEach(() => {
     nock(rootPath)
       .get('/courses/404')
@@ -91,7 +91,7 @@ describe('statuses tests', () => {
   });
 });
 
-describe('not access and network error', () => {
+describe('not access error and network error tests', () => {
   beforeEach(() => {
     nock(rootPath)
       .get('/courses/access')

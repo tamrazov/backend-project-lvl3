@@ -81,10 +81,7 @@ export const getDownloadPath = (str, mainHost, mainProtocol) => {
 
 export const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol) => {
   const $ = cheerio.load(html);
-  const images = $('img').toArray();
-  const scripts = $('script').toArray();
-  const links = $('link').toArray();
-  const data = [...images, ...scripts, ...links].filter((el) => {
+  const data = Object.keys(attrsTypesFromTag).map((el) => $(el).toArray()).flat().filter((el) => {
     const result = el.attribs[attrsTypesFromTag[el.name]];
     if (result.startsWith('/')) {
       return true;

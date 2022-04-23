@@ -26,7 +26,7 @@ describe('success page loading', () => {
     resourceFileJS = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-packs-js-runtime.js');
     resourceFileCss = await readFixtureFile('ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css');
     resourceFileHTML = await readFixtureFile('ru-hexlet-io-courses_file.html');
-
+  
     nock(rootPath)
       .get('/courses')
       .reply(200, resivedFile);
@@ -41,7 +41,7 @@ describe('success page loading', () => {
       .reply(200, resourceFileCss);
     nock(rootPath)
       .get('/courses')
-      .reply(200, resourceFileCss);
+      .reply(200, resourceFileHTML);
   });
 
   test('async page loading', async () => {

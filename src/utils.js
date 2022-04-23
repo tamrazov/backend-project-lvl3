@@ -12,18 +12,6 @@ const attrsTypesFromTag = {
   link: 'href',
 };
 
-export const getHost = (url) => {
-  const { host } = new URL(url);
-
-  return host;
-};
-
-export const getProtocol = (url) => {
-  const { protocol } = new URL(url);
-
-  return protocol;
-};
-
 export const fetchPage = (pathPage) => {
   debug(`fetch file from ${pathPage}`);
   return axios.get(pathPage)
@@ -81,20 +69,22 @@ export const getDownloadPath = (str, mainHost, mainProtocol) => {
 
 export const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol) => {
   const $ = cheerio.load(html);
-  const data = Object.keys(attrsTypesFromTag).map((el) => $(el).toArray()).flat().filter((el) => {
-    const result = el.attribs[attrsTypesFromTag[el.name]];
-    if (result.startsWith('/')) {
+  const data = Object.keys(attrsTypesFromTag).map((el) => $(el).toArray())
+    .flat()
+    .filter((el) => {
+      const result = el.attribs[attrsTypesFromTag[el.name]];
+      if (result.startsWith('/')) {
+        return true;
+      }
+
+      const { host } = new URL(result);
+
+      if (host !== mainHost) {
+        return false;
+      }
+
       return true;
-    }
-
-    const host = getHost(result);
-
-    if (host !== mainHost) {
-      return false;
-    }
-
-    return true;
-  });
+    });
 
   const resourses = data
     .filter((el) => el.attribs[attrsTypesFromTag[el.name]])

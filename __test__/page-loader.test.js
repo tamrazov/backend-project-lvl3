@@ -29,10 +29,10 @@ const resources = [
     fileSrc: '/assets/application.css',
     filePath: 'ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css',
   },
-  {
-    fileSrc: '/courses',
-    filePath: 'ru-hexlet-io-courses_file.html',
-  },
+  // {
+  //   fileSrc: '/courses',
+  //   filePath: 'ru-hexlet-io-courses_file.html',
+  // },
 ];
 
 describe('success page loading', () => {
@@ -41,18 +41,22 @@ describe('success page loading', () => {
     resources.forEach((el) => {
       nock(rootPath)
         .get(el.fileSrc)
-        .replyWithFile(200, getFixturePath(el.filePath));
+        .replyWithFile(200, getFixturePath(`__fixtures__/${el.filePath}`));
     });
     await loadPage('https://ru.hexlet.io/courses', outputPath);
   });
 
   test.each(resources)('async page loading %o', async (el) => {
+    console.log(path.join(
+      outputPath,
+      el.filePath,
+    ), 'outputPath outputPath outputPath')
     expect(
       await readFile(path.join(
         outputPath,
         el.filePath,
       )),
-    ).toBe(await readFile(el.fileSrc));
+    ).toBe(await readFile(el.filePath));
   });
 });
 

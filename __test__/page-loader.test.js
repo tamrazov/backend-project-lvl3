@@ -9,15 +9,10 @@ nock.disableNetConnect();
 let expectFile;
 let outputPath;
 const rootPath = 'https://ru.hexlet.io';
-const getFixturePath = (filename) => path.join('./', '__fixtures__', filename);
-const readFixturesFile = (filename) => fs.readFile(getFixturePath(filename), 'utf-8');
-const readFile = (filename) => fs.readFile(path.join('/', filename), 'utf-8');
+const getFixturePath = (filename) => path.join('__fixtures__', filename);
+const readFile = (filename) => fs.readFile(filename, 'utf-8');
 
 const resources = [
-  {
-    fileSrc: '/courses',
-    filePath: 'ru-hexlet-io-courses.html',
-  },
   {
     fileSrc: '/assets/professions/nodejs.png',
     filePath: 'ru-hexlet-io-courses_files/ru-hexlet-io-assets-professions-nodejs.png',
@@ -54,7 +49,7 @@ describe('success page loading', () => {
         outputPath,
         el.filePath,
       )),
-    ).toBe(await readFixturesFile(el.filePath));
+    ).toBe(await readFile(getFixturePath(el.filePath)));
   });
 });
 

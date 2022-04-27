@@ -94,8 +94,8 @@ export const extractResourses = (html, outputPath, currentPath, mainHost, mainPr
         el.attribs[attrsTypesFromTag[el.name]],
         mainHost,
       );
-      const resoursePath = `${outputPath}/${curResoursePath}`;
-      $(el).attr(attrsTypesFromTag[el.name], `${currentPath}_files/${curResoursePath}`);
+      const resoursePath = path.join(outputPath, curResoursePath);
+      $(el).attr(attrsTypesFromTag[el.name], path.join(`${currentPath}_files`, curResoursePath));
 
       return {
         resPath: getDownloadPath(src, mainHost, mainProtocol),

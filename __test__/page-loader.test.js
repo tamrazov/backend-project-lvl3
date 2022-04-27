@@ -9,8 +9,9 @@ nock.disableNetConnect();
 let expectFile;
 let outputPath;
 const rootPath = 'https://ru.hexlet.io';
-const getFixturePath = (filename) => path.join('./', filename);
-const readFile = (filename) => fs.readFile(getFixturePath(filename), 'utf-8');
+const getFixturePath = (filename) => path.join('./', '__fixtures__', filename);
+const readFixturesFile = (filename) => fs.readFile(getFixturePath(filename), 'utf-8');
+const readFile = (filename) => fs.readFile(path.join('/', filename), 'utf-8');
 
 const resources = [
   {
@@ -42,7 +43,7 @@ describe('success page loading', () => {
       nock(rootPath)
         .persist()
         .get(el.fileSrc)
-        .replyWithFile(200, getFixturePath(`__fixtures__/${el.filePath}`));
+        .replyWithFile(200, getFixturePath(el.filePath));
     });
     await loadPage('https://ru.hexlet.io/courses', outputPath);
   });
@@ -53,7 +54,7 @@ describe('success page loading', () => {
         outputPath,
         el.filePath,
       )),
-    ).toBe(await readFile(el.filePath));
+    ).toBe(await readFixturesFile(el.filePath));
   });
 });
 

@@ -77,6 +77,7 @@ export const extractResourses = (html, outputPath, currentPath, mainHost, mainPr
         return true;
       }
 
+      console.log(result, 'sdfsdlfsd;flds')
       const { host } = new URL(result);
 
       if (host !== mainHost) {

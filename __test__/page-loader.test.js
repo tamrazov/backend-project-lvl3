@@ -29,10 +29,10 @@ const resources = [
     fileSrc: '/assets/application.css',
     filePath: 'ru-hexlet-io-courses_files/ru-hexlet-io-assets-application.css',
   },
-  // {
-  //   fileSrc: '/courses',
-  //   filePath: 'ru-hexlet-io-courses_file.html',
-  // },
+  {
+    fileSrc: '/courses',
+    filePath: 'ru-hexlet-io-courses_files/ru-hexlet-io-courses.html',
+  },
 ];
 
 describe('success page loading', () => {
@@ -40,6 +40,7 @@ describe('success page loading', () => {
     outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
     resources.forEach((el) => {
       nock(rootPath)
+        .persist()
         .get(el.fileSrc)
         .replyWithFile(200, getFixturePath(`__fixtures__/${el.filePath}`));
     });

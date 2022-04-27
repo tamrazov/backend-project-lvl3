@@ -47,7 +47,6 @@ describe('success page loading', () => {
   });
 
   test.each(resources)('async page loading %o', async (el) => {
-    console.log(outputPath, 'outputPath outputPath outputPath')
     expect(
       await readFile(path.join(
         outputPath,

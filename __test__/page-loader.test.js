@@ -9,7 +9,7 @@ nock.disableNetConnect();
 let expectFile;
 let outputPath;
 const rootPath = 'https://ru.hexlet.io';
-const getFixturePath = (filename) => path.join('./', '__fixtures__', filename);
+const getFixturePath = (filename) => path.join('./', filename);
 const readFile = (filename) => fs.readFile(getFixturePath(filename), 'utf-8');
 
 const resources = [
@@ -35,7 +35,7 @@ const resources = [
   },
 ];
 
-describe.skip('success page loading', () => {
+describe('success page loading', () => {
   beforeAll(async () => {
     outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
     resources.forEach((el) => {
@@ -47,6 +47,7 @@ describe.skip('success page loading', () => {
   });
 
   test.each(resources)('async page loading %o', async (el) => {
+    console.log(outputPath, 'outputPath outputPath outputPath')
     expect(
       await readFile(path.join(
         outputPath,

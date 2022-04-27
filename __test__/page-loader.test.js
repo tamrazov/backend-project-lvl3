@@ -31,7 +31,7 @@ const resources = [
   },
 ];
 
-describe('success page loading', () => {
+describe('success page resourses loading', () => {
   beforeAll(async () => {
     outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
     resources.forEach((el) => {
@@ -50,6 +50,17 @@ describe('success page loading', () => {
         el.filePath,
       )),
     ).toBe(await readFile(getFixturePath(el.filePath)));
+  });
+});
+
+describe('success main page loading', () => {
+  test('async main page loading', async () => {
+    expect(
+      await readFile(path.join(
+        outputPath,
+        'ru-hexlet-io-courses.html',
+      )),
+    ).toBe(await readFile(getFixturePath('ru-hexlet-io-courses.html')));
   });
 });
 

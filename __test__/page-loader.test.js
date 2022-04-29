@@ -6,9 +6,9 @@ import loadPage from '../src/index.js';
 
 nock.disableNetConnect();
 
-let outputPath;
-const rootPath = 'https://ru.hexlet.io';
-const nockInstance = nock(rootPath).persist();
+const pageBase = 'https://ru.hexlet.io';
+const pageUrl = new URL('/courses', pageBase);
+const server = nock(pageBase).persist();
 const resources = [
   {
     fileSrc: '/assets/professions/nodejs.png',
@@ -30,43 +30,51 @@ const resources = [
 
 const getFixturePath = (filename) => path.join('__fixtures__', filename);
 const readFile = (filename) => fs.readFile(filename, 'utf-8');
+const makeOutputDir = () => fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
 
-describe('success page resourses loading', () => {
+describe('success page-loading work', () => {
+  let outputPath;
+
   beforeAll(async () => {
-    outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'page-loader-'));
+    outputPath = await makeOutputDir();
     resources.forEach((el) => {
-      nockInstance
+      server
         .get(el.fileSrc)
         .replyWithFile(200, getFixturePath(el.filePath));
     });
 
-    await loadPage('https://ru.hexlet.io/courses', outputPath);
+    await loadPage(pageUrl.toString(), outputPath);
   });
 
-  test.each(resources)('async page loading %o', async (el) => {
-    const expectFile = await readFile(path.join(outputPath, el.filePath));
-    const actualFile = await readFile(getFixturePath(el.filePath));
+  test.each(resources)('resource loaded successfully $fileSrc', async ({ filePath }) => {
+    const actual = await readFile(path.join(outputPath, filePath));
+    const expected = await readFile(getFixturePath(filePath));
 
-    expect(expectFile).toBe(actualFile);
+    expect(actual).toBe(expected);
   });
 
-  test('async main page loading', async () => {
-    const expectFile = await readFile(path.join(outputPath, 'ru-hexlet-io-courses.html'));
-    const actualFile = await readFile(getFixturePath('ru-hexlet-io-courses.html'));
+  test('main page loaded successfully', async () => {
+    const pageFileName = 'ru-hexlet-io-courses.html';
+    const actual = await readFile(path.join(outputPath, pageFileName));
+    const expected = await readFile(getFixturePath(pageFileName));
 
-    expect(expectFile).toBe(actualFile);
+    expect(actual).toBe(expected);
   });
 });
 
 describe('errors cases tests', () => {
-  const statuses = [404, 500];
+  let outputPath;
 
-  test.each(statuses)('test (%s)', async (status) => {
-    nockInstance
-      .get(`/courses/${status}`)
+  beforeAll(async () => {
+    outputPath = await makeOutputDir();
+  });
+
+  test.each([404, 500])('test (%s)', async (status) => {
+    const url = new URL(`/${status}`, pageBase);
+
+    server
+      .get(url.pathname)
       .reply(status);
-
-    const url = new URL(`/courses/${status}`, rootPath);
 
     await expect(loadPage(url.toString(), outputPath))
       .rejects.toThrowError(`Request failed with status code ${status}`);
@@ -74,25 +82,20 @@ describe('errors cases tests', () => {
 });
 
 describe('not access error and network error tests', () => {
-  beforeEach(() => {
-    nockInstance
-      .get('/courses/access')
-      .replyWithFile(200, getFixturePath('ru-hexlet-io-courses.html'));
-    nockInstance
-      .get('/courses/network')
-      .replyWithError('Network Error');
-  });
-
   test('not access', async () => {
     const rootDirPath = '/sys';
-    const url = new URL('/courses/access', rootPath);
 
-    await expect(loadPage(url.toString(), rootDirPath))
+    await expect(loadPage(pageUrl.toString(), rootDirPath))
       .rejects.toThrow(/EACCES/);
   });
 
   test('network error', async () => {
-    const url = new URL('/courses/network', rootPath);
+    const outputPath = await makeOutputDir();
+    const url = new URL('/network', pageBase);
+
+    server
+      .get(url.pathname)
+      .replyWithError('Network Error');
 
     await expect(loadPage(url.toString(), outputPath))
       .rejects.toThrowError('Network Error');

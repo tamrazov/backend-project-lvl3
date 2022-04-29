@@ -8,7 +8,7 @@ lint:
 	npx eslint .
 
 test:
-	DEBUG=axios npm test
+	npm test
 
 test-debug:
 	DEBUG=nock.*,axios npm test

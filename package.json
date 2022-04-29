@@ -9,6 +9,9 @@
   "bin": {
     "page-loader": "bin/page-loader.js"
   },
+  "engines": {
+    "node": ">=14"
+  },
   "type": "module",
   "author": "Tamrazov Alexandr",
   "license": "ISC",

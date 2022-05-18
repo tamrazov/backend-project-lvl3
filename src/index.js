@@ -21,8 +21,8 @@ export default (url, output = process.cwd()) => {
       .catch(() => fs.mkdir(`${output}/${currentPath}_files`)
         .then(() => page)))
     .then((page) => {
-      const { host, protocol } = new URL(url);
-      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`, currentPath, host, protocol);
+      const { origin } = new URL(url);
+      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`, currentPath, origin);
       const resoursesDownload = resourses.map(({ resPath, resName }) => ({
         title: resName,
         task: () => axios({

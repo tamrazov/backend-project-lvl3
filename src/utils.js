@@ -6,99 +6,63 @@ import cheerio from 'cheerio';
 
 debug('booting %o', 'page-loader');
 
-const attrsTypesFromTag = {
+const tagsAttributes = {
   img: 'src',
   script: 'src',
   link: 'href',
 };
 
-export const fetchPage = (pathPage) => {
-  debug(`fetch file from ${pathPage}`);
-  return axios.get(pathPage)
+export const fetchPage = (url) => {
+  debug('fetch file from', url);
+  return axios.get(url)
     .then((response) => {
-      debug(`success fetch file ${response.status}`);
+      debug('success fetch file', response.status);
       return response.data;
     })
     .catch((err) => {
-      debug(`fetch error ${err}`);
+      debug('fetch error', err);
       throw err;
     });
 };
 
 export const getCurrentPath = (str, ext = '') => {
-  let string = str;
-  if (string.charAt(0) === '/') {
-    string = string.slice(1);
-  }
+  const { host, pathname } = new URL(str);
 
-  let curName;
-  if (string.includes('://')) {
-    curName = string.split('://')['1'];
-  } else {
-    curName = string;
-  }
-  const curResult = curName.replace(/([.\\/])/gi, '-');
+  const curResult = `${host}${pathname}`.replace(/([.\\/])/gi, '-');
 
   return `${curResult}${ext}`;
 };
 
-export const getCurrentResoursePath = (str, mainHost) => {
-  let result = str;
-
-  if (result.startsWith('/')) {
-    result = `https://${mainHost}${result}`;
-  }
-
-  const { dir, name, ext } = path.parse(result);
+export const getCurrentResoursePath = (url) => {
+  const { dir, name, ext } = path.parse(url);
 
   return getCurrentPath(`${dir}/${name}`, ext || '.html');
 };
 
-export const getDownloadPath = (str, mainHost, mainProtocol) => {
-  let result = str;
-
-  if (result.startsWith('/')) {
-    result = `${mainProtocol}//${mainHost}${result}`;
-  } else {
-    const { pathname } = new URL(str);
-    result = `${mainProtocol}//${mainHost}${pathname}`;
-  }
-
-  return result;
-};
-
-export const extractResourses = (html, outputPath, currentPath, mainHost, mainProtocol) => {
+export const extractResourses = (html, outputPath, currentPath, origin) => {
   const $ = cheerio.load(html);
-  const data = Object.keys(attrsTypesFromTag).map((el) => $(el).toArray())
-    .flat()
+  const data = Object.keys(tagsAttributes).flatMap((el) => $(el).toArray());
+
+  const resourses = data
     .filter((el) => {
-      const result = el.attribs[attrsTypesFromTag[el.name]];
-      if (result.startsWith('/')) {
+      // determine the locality of the paths
+      const url = new URL(el.attribs[tagsAttributes[el.name]], origin);
+
+      if (url.origin === origin) {
         return true;
       }
 
-      const { host } = new URL(result);
-
-      if (host !== mainHost) {
-        return false;
-      }
-
-      return true;
-    });
-
-  const resourses = data
-    .filter((el) => el.attribs[attrsTypesFromTag[el.name]])
+      return false;
+    })
     .map((el) => {
-      const src = el.attribs[attrsTypesFromTag[el.name]];
-      const curResoursePath = getCurrentResoursePath(
-        el.attribs[attrsTypesFromTag[el.name]],
-        mainHost,
-      );
+      const src = el.attribs[tagsAttributes[el.name]];
+      const resPath = new URL(src, origin).toString();
+      const curResoursePath = getCurrentResoursePath(resPath);
       const resoursePath = path.join(outputPath, curResoursePath);
-      $(el).attr(attrsTypesFromTag[el.name], path.join(`${currentPath}_files`, curResoursePath));
+      $(el).attr(tagsAttributes[el.name], path.join(`${currentPath}_files`, curResoursePath));
 
       return {
-        resPath: getDownloadPath(src, mainHost, mainProtocol),
+        resPath,
         resName: resoursePath,
       };
     });

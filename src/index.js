@@ -6,13 +6,14 @@ import { constants } from 'fs';
 import path from 'path';
 import { fetchPage, getCurrentPath, extractResourses } from './utils.js';
 
-debug('booting %o', 'page-loader');
+const logLoader = debug('page-loader');
 
 export default (url, output = process.cwd()) => {
   if (!url) {
     throw new Error('Error');
   }
 
+  logLoader('url and output', url, output);
   const { dir, name } = path.parse(url);
   const currentPath = getCurrentPath(path.join(dir, name));
   const pathForDir = path.join(output, `${currentPath}_files`);
@@ -32,17 +33,18 @@ export default (url, output = process.cwd()) => {
           url: resPath,
           responseType: 'arraybuffer',
         })
-          .then(({ data, status }) => {
-            debug(`success fetch resource ${status}`);
+          .then(({ data }) => {
+            logLoader('success fetch resource', resName);
             return fs.writeFile(resName, data);
           })
           .catch((err) => {
-            debug(`fetch error ${err}`);
+            logLoader(`fetch error ${err}`);
             throw err;
           }),
       }));
       const tasks = new Listr(resoursesDownloadAndSave, { concurrent: true, exitOnError: false });
 
+      logLoader('main page save path', pathMainFile);
       return tasks.run()
         .then(() => fs.writeFile(pathMainFile, html))
         .then(() => pathMainFile);

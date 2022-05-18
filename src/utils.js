@@ -25,8 +25,8 @@ export const fetchPage = (url) => {
     });
 };
 
-export const getCurrentPath = (str, ext = '') => {
-  const { host, pathname } = new URL(str);
+export const getCurrentPath = (url, ext = '') => {
+  const { host, pathname } = new URL(url);
 
   const curResult = `${host}${pathname}`.replace(/([.\\/])/gi, '-');
 

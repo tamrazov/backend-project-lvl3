@@ -14,16 +14,18 @@ export default (url, output = process.cwd()) => {
   }
 
   const { dir, name } = path.parse(url);
-  const currentPath = getCurrentPath(`${dir}/${name}`);
+  const currentPath = getCurrentPath(path.join(dir, name));
+  const pathForDir = path.join(output, `${currentPath}_files`);
+  const pathMainFile = path.join(output, `${currentPath}.html`);
 
   return fetchPage(url)
-    .then((page) => fs.access(`${output}/${currentPath}_files`, constants.W_OK)
-      .catch(() => fs.mkdir(`${output}/${currentPath}_files`)
+    .then((page) => fs.access(pathForDir, constants.W_OK)
+      .catch(() => fs.mkdir(pathForDir)
         .then(() => page)))
     .then((page) => {
       const { origin } = new URL(url);
-      const { resourses, html } = extractResourses(page, `${output}/${currentPath}_files`, currentPath, origin);
-      const resoursesDownload = resourses.map(({ resPath, resName }) => ({
+      const { resourses, html } = extractResourses(page, pathForDir, currentPath, origin);
+      const resoursesDownloadAndSave = resourses.map(({ resPath, resName }) => ({
         title: resName,
         task: () => axios({
           method: 'get',
@@ -39,10 +41,10 @@ export default (url, output = process.cwd()) => {
             throw err;
           }),
       }));
-      const tasks = new Listr(resoursesDownload, { concurrent: true, exitOnError: false });
+      const tasks = new Listr(resoursesDownloadAndSave, { concurrent: true, exitOnError: false });
 
       return tasks.run()
-        .then(() => fs.writeFile(`${output}/${currentPath}.html`, html))
-        .then(() => `${output}/${currentPath}.html`);
+        .then(() => fs.writeFile(pathMainFile, html))
+        .then(() => pathMainFile);
     });
 };

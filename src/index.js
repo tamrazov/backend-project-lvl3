@@ -1,52 +1,42 @@
 import fs from 'fs/promises';
-import axios from 'axios';
 import debug from 'debug';
 import Listr from 'listr';
 import { constants } from 'fs';
 import path from 'path';
-import { fetchPage, getCurrentPath, extractResourses } from './utils.js';
+import {
+  fetchPage, fetchTask, constructPath, extractResourses,
+} from './utils.js';
 
-const logLoader = debug('page-loader');
+const log = debug('page-loader');
 
 export default (url, output = process.cwd()) => {
   if (!url) {
-    throw new Error('Error');
+    throw new Error('Not url!');
   }
 
-  logLoader('url and output', url, output);
+  log('url and output', url, output);
   const { dir, name } = path.parse(url);
-  const currentPath = getCurrentPath(path.join(dir, name));
-  const pathForDir = path.join(output, `${currentPath}_files`);
-  const pathMainFile = path.join(output, `${currentPath}.html`);
+  const pageFileName = constructPath(path.join(dir, name));
+  const resourcesDir = `${pageFileName}_files`;
+  const resourcesDirPath = path.join(output, resourcesDir);
+  const pageFilePath = path.join(output, `${pageFileName}.html`);
 
   return fetchPage(url)
-    .then((page) => fs.access(pathForDir, constants.W_OK)
-      .catch(() => fs.mkdir(pathForDir)
+    .then((page) => fs.access(resourcesDirPath, constants.W_OK)
+      .catch(() => fs.mkdir(resourcesDirPath)
         .then(() => page)))
     .then((page) => {
       const { origin } = new URL(url);
-      const { resourses, html } = extractResourses(page, pathForDir, currentPath, origin);
-      const resoursesDownloadAndSave = resourses.map(({ resPath, resName }) => ({
-        title: resName,
-        task: () => axios({
-          method: 'get',
-          url: resPath,
-          responseType: 'arraybuffer',
-        })
-          .then(({ data }) => {
-            logLoader('success fetch resource', resName);
-            return fs.writeFile(resName, data);
-          })
-          .catch((err) => {
-            logLoader(`fetch error ${err}`);
-            throw err;
-          }),
+      const { resourses, html } = extractResourses(page, resourcesDir, origin);
+      const tasksDownloadAndSave = resourses.map(({ url: resourcesUrl, filePath }) => ({
+        title: filePath,
+        task: () => fetchTask(resourcesUrl, filePath, output),
       }));
-      const tasks = new Listr(resoursesDownloadAndSave, { concurrent: true, exitOnError: false });
+      const listr = new Listr(tasksDownloadAndSave, { concurrent: true, exitOnError: false });
 
-      logLoader('main page save path', pathMainFile);
-      return tasks.run()
-        .then(() => fs.writeFile(pathMainFile, html))
-        .then(() => pathMainFile);
+      log('saving main page file', pageFilePath);
+      return listr.run()
+        .then(() => fs.writeFile(pageFilePath, html))
+        .then(() => pageFilePath);
     });
 };

@@ -3,8 +3,9 @@ import 'axios-debug-log';
 import debug from 'debug';
 import path from 'path';
 import cheerio from 'cheerio';
+import fs from 'fs/promises';
 
-debug('booting %o', 'page-loader');
+const log = debug('page-loader');
 
 const tagsAttributes = {
   img: 'src',
@@ -13,57 +14,63 @@ const tagsAttributes = {
 };
 
 export const fetchPage = (url) => {
-  debug('fetch file from', url);
+  log('fetch page from', url);
+
   return axios.get(url)
-    .then((response) => {
-      debug('success fetch file', response.status);
-      return response.data;
-    })
+    .then((response) => response.data)
     .catch((err) => {
-      debug('fetch error', err);
       throw err;
     });
 };
 
-export const getCurrentPath = (url, ext = '') => {
+export const fetchTask = (url, filePath, output) => axios({
+  method: 'get',
+  url,
+  responseType: 'arraybuffer',
+})
+  .then(({ data }) => {
+    log('success fetch resource', filePath);
+    return fs.writeFile(path.join(output, filePath), data);
+  })
+  .catch((err) => {
+    log(`fetch error ${err}`);
+    throw err;
+  });
+
+export const constructPath = (url, ext = '') => {
   const { host, pathname } = new URL(url);
 
-  const curResult = `${host}${pathname}`.replace(/([.\\/])/gi, '-');
+  const fileName = `${host}${pathname}`.replace(/\W/gi, '-');
 
-  return `${curResult}${ext}`;
+  return `${fileName}${ext}`;
 };
 
-export const getCurrentResoursePath = (url) => {
-  const { dir, name, ext } = path.parse(url);
+export const constructResoursesPath = (url) => {
+  const { dir, name, ext } = path.parse(url.href);
 
-  return getCurrentPath(`${dir}/${name}`, ext || '.html');
+  return constructPath(`${dir}/${name}`, ext || '.html');
 };
 
-export const extractResourses = (html, outputPath, currentPath, origin) => {
+export const extractResourses = (html, resourcesDir, pageOrigin) => {
   const $ = cheerio.load(html);
-  const data = Object.keys(tagsAttributes).flatMap((el) => $(el).toArray());
+  const resourses = Object.entries(tagsAttributes)
+    .flatMap(([tagName, attr]) => $(tagName).toArray()
+      .map((el) => $(el))
+      .map(($element) => ({
+        $element,
+        url: new URL($element.attr(attr), pageOrigin),
+        attr,
+      })))
+    .filter(({ url }) => url.origin === pageOrigin)
+    .map(({ $element, url, attr }) => {
+      const resourceFileName = constructResoursesPath(url);
+      const filePath = path.join(resourcesDir, resourceFileName);
 
-  const resourses = data
-    .filter((el) => {
-      // determine the locality of the paths
-      const url = new URL(el.attribs[tagsAttributes[el.name]], origin);
-
-      if (url.origin === origin) {
-        return true;
-      }
-
-      return false;
-    })
-    .map((el) => {
-      const src = el.attribs[tagsAttributes[el.name]];
-      const resPath = new URL(src, origin).toString();
-      const curResoursePath = getCurrentResoursePath(resPath);
-      const resoursePath = path.join(outputPath, curResoursePath);
-      $(el).attr(tagsAttributes[el.name], path.join(`${currentPath}_files`, curResoursePath));
+      $element.attr(attr, filePath);
 
       return {
-        resPath,
-        resName: resoursePath,
+        url: url.toString(),
+        filePath,
       };
     });
 

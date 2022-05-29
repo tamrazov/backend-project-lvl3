@@ -1,11 +1,8 @@
 import axios from 'axios';
 import 'axios-debug-log';
-import debug from 'debug';
 import path from 'path';
 import cheerio from 'cheerio';
 import fs from 'fs/promises';
-
-const log = debug('page-loader');
 
 const tagsAttributes = {
   img: 'src',
@@ -13,47 +10,27 @@ const tagsAttributes = {
   link: 'href',
 };
 
-export const fetchPage = (url) => {
-  log('fetch page from', url);
-
-  return axios.get(url)
-    .then((response) => response.data)
-    .catch((err) => {
-      throw err;
-    });
-};
-
-export const fetchTask = (url, filePath, output) => axios({
+export const downloadResource = (url, filePath) => axios({
   method: 'get',
   url,
   responseType: 'arraybuffer',
 })
-  .then(({ data }) => {
-    log('success fetch resource', filePath);
-    return fs.writeFile(path.join(output, filePath), data);
-  })
-  .catch((err) => {
-    log(`fetch error ${err}`);
-    throw err;
-  });
+  .then(({ data }) => fs.writeFile(filePath, data));
 
-export const constructPath = (url, ext = '') => {
-  const { host, pathname } = new URL(url);
+export const slugifyUrl = ({ hostname, pathname }) => `${hostname}${pathname}`.replace(/\W/gi, '-');
 
-  const fileName = `${host}${pathname}`.replace(/\W/gi, '-');
+export const slugifyResourseUrl = (url) => {
+  const { dir, name, ext } = path.parse(url.pathname);
+  const fileExtension = ext || '.html';
+  const filePath = path.join(dir, name);
+  const fileName = slugifyUrl(new URL(filePath, url.origin));
 
-  return `${fileName}${ext}`;
+  return `${fileName}${fileExtension}`;
 };
 
-export const constructResoursesPath = (url) => {
-  const { dir, name, ext } = path.parse(url.href);
-
-  return constructPath(`${dir}/${name}`, ext || '.html');
-};
-
-export const extractResourses = (html, resourcesDir, pageOrigin) => {
+export const extractResources = (html, resourcesDir, pageOrigin) => {
   const $ = cheerio.load(html);
-  const resourses = Object.entries(tagsAttributes)
+  const resources = Object.entries(tagsAttributes)
     .flatMap(([tagName, attr]) => $(tagName).toArray()
       .map((el) => $(el))
       .map(($element) => ({
@@ -63,16 +40,16 @@ export const extractResourses = (html, resourcesDir, pageOrigin) => {
       })))
     .filter(({ url }) => url.origin === pageOrigin)
     .map(({ $element, url, attr }) => {
-      const resourceFileName = constructResoursesPath(url);
-      const filePath = path.join(resourcesDir, resourceFileName);
+      const resourceFileName = slugifyResourseUrl(url);
+      const resourceFilePath = path.join(resourcesDir, resourceFileName);
 
-      $element.attr(attr, filePath);
+      $element.attr(attr, resourceFilePath);
 
       return {
-        url: url.toString(),
-        filePath,
+        resourceUrl: url.toString(),
+        resourceFilePath,
       };
     });
 
-  return { resourses, html: $.html() };
+  return { resources, html: $.html() };
 };

@@ -1,42 +1,48 @@
 import fs from 'fs/promises';
+import axios from 'axios';
+import 'axios-debug-log';
 import debug from 'debug';
 import Listr from 'listr';
 import { constants } from 'fs';
 import path from 'path';
-import {
-  fetchPage, fetchTask, constructPath, extractResourses,
-} from './utils.js';
+import { downloadResource, slugifyUrl, extractResources } from './utils.js';
 
 const log = debug('page-loader');
 
 export default (url, output = process.cwd()) => {
   if (!url) {
-    throw new Error('Not url!');
+    throw new Error('url is required');
   }
 
-  log('url and output', url, output);
-  const { dir, name } = path.parse(url);
-  const pageFileName = constructPath(path.join(dir, name));
+  log('fetch page from', url);
+  log('output to', output);
+
+  const pageUrl = new URL(url);
+  const pageFileName = slugifyUrl(pageUrl);
   const resourcesDir = `${pageFileName}_files`;
   const resourcesDirPath = path.join(output, resourcesDir);
   const pageFilePath = path.join(output, `${pageFileName}.html`);
 
-  return fetchPage(url)
-    .then((page) => fs.access(resourcesDirPath, constants.W_OK)
+  return axios.get(url)
+    .then(({ data }) => fs.access(resourcesDirPath, constants.W_OK)
       .catch(() => fs.mkdir(resourcesDirPath)
-        .then(() => page)))
-    .then((page) => {
-      const { origin } = new URL(url);
-      const { resourses, html } = extractResourses(page, resourcesDir, origin);
-      const tasksDownloadAndSave = resourses.map(({ url: resourcesUrl, filePath }) => ({
-        title: filePath,
-        task: () => fetchTask(resourcesUrl, filePath, output),
-      }));
-      const listr = new Listr(tasksDownloadAndSave, { concurrent: true, exitOnError: false });
+        .then(() => data)))
+    .then((content) => {
+      const { resources, html } = extractResources(content, resourcesDir, pageUrl.origin);
 
-      log('saving main page file', pageFilePath);
+      log('save page file', pageFilePath);
+
+      return fs.writeFile(pageFilePath, html)
+        .then(() => resources);
+    })
+    .then((resources) => {
+      const tasks = resources.map(({ resourceUrl, resourceFilePath }) => ({
+        title: resourceFilePath,
+        task: () => downloadResource(resourceUrl, path.join(output, resourceFilePath)),
+      }));
+      const listr = new Listr(tasks, { concurrent: true, exitOnError: false });
+
       return listr.run()
-        .then(() => fs.writeFile(pageFilePath, html))
         .then(() => pageFilePath);
     });
 };
